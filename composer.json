@@ -1,0 +1,29 @@
+{
+	"name": "raxos/terminal",
+	"description": "Base classes for custom terminals with command support.",
+	"license": "mit",
+	"minimum-stability": "stable",
+	"type": "library",
+	"authors": [
+		{
+			"name": "Bas Milius",
+			"email": "bas@mili.us"
+		}
+	],
+	"autoload": {
+		"psr-4": {
+			"Raxos\\Terminal\\": "src/Raxos/Terminal"
+		}
+	},
+	"config": {
+		"platform": {
+			"php": "8.1"
+		}
+	},
+	"require": {
+		"jetbrains/phpstorm-attributes": "^1.0",
+        "league/climate": "^3.8",
+        "nunomaduro/collision": "^6.2",
+        "raxos/foundation": "*"
+	}
+}
