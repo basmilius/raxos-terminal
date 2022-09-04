@@ -109,7 +109,7 @@ final class Parser
 
                 $result['command'] = $word;
 
-            } else if ($word = $cursor->match('/^([\w.\\\]+)/')) {
+            } else if ($word = $cursor->match('/^([\w.\\\:\/]+)/')) {
 
                 // string (As an argument)
 

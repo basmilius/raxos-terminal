@@ -166,7 +166,7 @@ final class TextCursor
      */
     public final function quotedString(): ?string
     {
-        $str = $this->match("/^(?:(?:\"(?:\\\\\"|[^\"])+\")|(?:'(?:\\\'|[^'])+'))/is");
+        $str = $this->match("/^(?:\"(?:\"|[^\"])+\"|'(?:'|[^'])+')/i");
 
         if ($str !== null) {
             return stripslashes(mb_substr($str, 1, -1));

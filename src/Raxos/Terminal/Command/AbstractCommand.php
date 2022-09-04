@@ -18,7 +18,7 @@ use Raxos\Terminal\TerminalException;
 abstract class AbstractCommand
 {
 
-    protected Printer $printer;
+    protected readonly Printer $printer;
 
     /**
      * AbstractCommand constructor.
@@ -29,7 +29,7 @@ abstract class AbstractCommand
      * @since 1.0.1
      */
     #[Pure]
-    public function __construct(protected Terminal $terminal)
+    public function __construct(protected readonly Terminal $terminal)
     {
         $this->printer = $terminal->getPrinter();
     }

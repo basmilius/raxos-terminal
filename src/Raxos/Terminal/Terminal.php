@@ -21,7 +21,7 @@ class Terminal
 {
 
     private array $commands = [HelpCommand::class];
-    private Printer $printer;
+    private readonly Printer $printer;
 
     /**
      * Terminal constructor.

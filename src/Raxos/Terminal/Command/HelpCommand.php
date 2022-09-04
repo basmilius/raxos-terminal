@@ -62,17 +62,12 @@ final class HelpCommand extends AbstractCommand
             $this->printer->out($title);
             $this->printer->tab()->darkGray($spec->getDescription());
 
-            if (!empty($options)) {
-                $this->printer->br();
-
-                foreach ($options as $option => [, $description]) {
-                    $this->printer->tab()->darkGray(str_pad("--{$option}", 16) . ' ' . $description);
-                }
+            if ($spec->getExample() !== null) {
+                $this->printer->tab()->darkGray('Example: ' . $argv[0] . ' ' . $spec->getExample());
             }
 
-            if ($spec->getExample() !== null) {
-                $this->printer->br();
-                $this->printer->tab()->darkGray('Example: ' . $argv[0] . ' ' . $spec->getExample());
+            foreach ($options as $option => [, $description]) {
+                $this->printer->tab(2)->darkGray(str_pad("--{$option}", 16) . ' ' . $description);
             }
         }
     }

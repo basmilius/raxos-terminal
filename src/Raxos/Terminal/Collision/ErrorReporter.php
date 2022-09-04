@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Raxos\Terminal\Collision;
 
 use Exception;
-use NunoMaduro\Collision\Adapters\Laravel\Inspector;
 
 /**
  * Class ErrorReporter
@@ -27,9 +26,9 @@ final class ErrorReporter
     public static function exception(Exception $err): void
     {
         $errorReporting = self::collision();
-        $errorReporting->getHandler()->setException($err);
-        $errorReporting->getHandler()->setInspector(new Inspector($err));
-        $errorReporting->getHandler()->handle();
+        $errorReporting->handler->setException($err);
+        $errorReporting->handler->setInspector(new Inspector($err));
+        $errorReporting->handler->handle();
     }
 
     /**

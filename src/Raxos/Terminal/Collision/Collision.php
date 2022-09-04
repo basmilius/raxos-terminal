@@ -7,7 +7,6 @@ namespace Raxos\Terminal\Collision;
 use NunoMaduro\Collision\Contracts\Provider;
 use NunoMaduro\Collision\Handler;
 use Whoops\Run;
-use Whoops\RunInterface;
 
 /**
  * Class Collision
@@ -19,19 +18,17 @@ use Whoops\RunInterface;
 final class Collision implements Provider
 {
 
-    protected Handler $handler;
-    protected RunInterface $run;
-
     /**
      * Collision constructor.
      *
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public function __construct()
+    public function __construct(
+        public readonly Handler $handler = new Handler(),
+        public readonly Run $run = new Run()
+    )
     {
-        $this->handler = new Handler();
-        $this->run = new Run();
     }
 
     /**
