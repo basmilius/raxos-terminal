@@ -1,5 +1,4 @@
 <?php
-/** @noinspection PhpInternalEntityUsedInspection */
 declare(strict_types=1);
 
 namespace Raxos\Terminal\Collision;
@@ -15,7 +14,7 @@ use Whoops\Run;
  * @package Raxos\Terminal\Collision
  * @since 1.0.1
  */
-final class Collision implements Provider
+final readonly class Collision implements Provider
 {
 
     /**
@@ -25,8 +24,8 @@ final class Collision implements Provider
      * @since 1.0.1
      */
     public function __construct(
-        public readonly Handler $handler = new Handler(),
-        public readonly Run $run = new Run()
+        public Handler $handler = new Handler(),
+        public Run $run = new Run()
     )
     {
     }
