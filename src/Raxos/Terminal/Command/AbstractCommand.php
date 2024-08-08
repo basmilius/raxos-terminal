@@ -4,9 +4,7 @@ declare(strict_types=1);
 namespace Raxos\Terminal\Command;
 
 use JetBrains\PhpStorm\Pure;
-use Raxos\Terminal\Printer;
-use Raxos\Terminal\Terminal;
-use Raxos\Terminal\TerminalException;
+use Raxos\Terminal\{Printer, Terminal, TerminalException};
 
 /**
  * Class AbstractCommand

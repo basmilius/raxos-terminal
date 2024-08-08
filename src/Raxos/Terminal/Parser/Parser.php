@@ -30,7 +30,6 @@ final class Parser
      * @return array|null
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
-     * @noinspection DuplicatedCode
      */
     #[ArrayShape([
         'raw' => 'string',
@@ -180,7 +179,7 @@ final class Parser
     {
         $arguments = $GLOBALS['argv'];
         array_shift($arguments);
-        $arguments = array_map(fn(string $arg) => str_contains($arg, ' ') ? '"' . str_replace('"', '\"', $arg) . '"' : $arg, $arguments);
+        $arguments = array_map(static fn(string $arg) => str_contains($arg, ' ') ? '"' . str_replace('"', '\"', $arg) . '"' : $arg, $arguments);
         $command = implode(' ', $arguments);
 
         return self::parse($command);

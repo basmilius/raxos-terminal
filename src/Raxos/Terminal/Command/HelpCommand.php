@@ -35,7 +35,7 @@ final class HelpCommand extends AbstractCommand
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public final function execute(array $arguments, array $options): void
+    public function execute(array $arguments, array $options): void
     {
         global $argv;
 

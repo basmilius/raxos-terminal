@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Raxos\Terminal\Parser;
 
-use JetBrains\PhpStorm\Pure;
 use function mb_strlen;
 use function mb_substr;
 use function preg_match;
@@ -42,7 +41,7 @@ final class TextCursor
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public final function getPosition(): int
+    public function getPosition(): int
     {
         return $this->position;
     }
@@ -54,7 +53,7 @@ final class TextCursor
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public final function getText(): string
+    public function getText(): string
     {
         return $this->text;
     }
@@ -65,7 +64,7 @@ final class TextCursor
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public final function advance(): void
+    public function advance(): void
     {
         ++$this->position;
     }
@@ -78,7 +77,7 @@ final class TextCursor
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public final function advanceBy(int $num): void
+    public function advanceBy(int $num): void
     {
         $this->position += $num;
     }
@@ -90,7 +89,7 @@ final class TextCursor
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public final function atEnd(): bool
+    public function atEnd(): bool
     {
         return $this->position >= $this->maxLength;
     }
@@ -102,7 +101,7 @@ final class TextCursor
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public final function character(): ?string
+    public function character(): ?string
     {
         return mb_substr($this->text, $this->position, 1);
     }
@@ -114,8 +113,7 @@ final class TextCursor
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    #[Pure]
-    public final function isSpace(): bool
+    public function isSpace(): bool
     {
         return $this->peek() === ' ';
     }
@@ -130,7 +128,7 @@ final class TextCursor
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public final function match(string $pattern): ?string
+    public function match(string $pattern): ?string
     {
         $result = preg_match($pattern, $this->remainder(), $match);
 
@@ -152,7 +150,7 @@ final class TextCursor
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public final function peek(int $length = 1): ?string
+    public function peek(int $length = 1): ?string
     {
         return mb_substr($this->text, $this->position, $length);
     }
@@ -164,7 +162,7 @@ final class TextCursor
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public final function quotedString(): ?string
+    public function quotedString(): ?string
     {
         $str = $this->match("/^(?:\"(?:\"|[^\"])+\"|'(?:'|[^'])+')/i");
 
@@ -182,7 +180,7 @@ final class TextCursor
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public final function remainder(): string
+    public function remainder(): string
     {
         return mb_substr($this->text, $this->position);
     }

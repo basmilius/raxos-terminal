@@ -37,7 +37,7 @@ final class CommandSpec
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public final function getDescription(): ?string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -49,7 +49,7 @@ final class CommandSpec
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public final function getExample(): ?string
+    public function getExample(): ?string
     {
         return $this->example;
     }
@@ -61,7 +61,7 @@ final class CommandSpec
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public final function getName(): ?string
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -73,7 +73,7 @@ final class CommandSpec
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public final function getArguments(): array
+    public function getArguments(): array
     {
         return $this->arguments;
     }
@@ -85,7 +85,7 @@ final class CommandSpec
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public final function getOptions(): array
+    public function getOptions(): array
     {
         return $this->options;
     }
@@ -99,7 +99,7 @@ final class CommandSpec
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public final function description(string $description): self
+    public function description(string $description): self
     {
         $this->description = $description;
 
@@ -115,7 +115,7 @@ final class CommandSpec
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public final function example(string $example): self
+    public function example(string $example): self
     {
         $this->example = $example;
 
@@ -132,7 +132,7 @@ final class CommandSpec
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public final function argument(string $name, string $type): self
+    public function argument(string $name, string $type): self
     {
         $this->arguments[$name] = $type;
 
@@ -150,7 +150,7 @@ final class CommandSpec
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public final function option(string $name, string $type, string $description): self
+    public function option(string $name, string $type, string $description): self
     {
         $this->options[$name] = [$type, $description];
 

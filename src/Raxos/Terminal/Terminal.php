@@ -4,8 +4,7 @@ declare(strict_types=1);
 namespace Raxos\Terminal;
 
 use Raxos\Terminal\Collision\ErrorReporter;
-use Raxos\Terminal\Command\AbstractCommand;
-use Raxos\Terminal\Command\HelpCommand;
+use Raxos\Terminal\Command\{AbstractCommand, HelpCommand};
 use Raxos\Terminal\Parser\Parser;
 use function is_subclass_of;
 use function sprintf;
