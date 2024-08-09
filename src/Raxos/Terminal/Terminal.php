@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Raxos\Terminal;
 
+use Exception;
 use Raxos\Terminal\Collision\ErrorReporter;
 use Raxos\Terminal\Command\{AbstractCommand, HelpCommand};
 use Raxos\Terminal\Parser\Parser;
@@ -120,7 +121,7 @@ class Terminal
                 $command = new $commandClass($this);
                 $command->execute($cl['arguments'], $cl['options']);
             }
-        } catch (TerminalException $err) {
+        } catch (Exception $err) {
             ErrorReporter::exception($err);
         }
 

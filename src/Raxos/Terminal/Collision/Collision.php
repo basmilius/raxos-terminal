@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Raxos\Terminal\Collision;
 
-use NunoMaduro\Collision\Contracts\Provider;
 use NunoMaduro\Collision\Handler;
 use Whoops\Run;
 
@@ -14,8 +13,11 @@ use Whoops\Run;
  * @package Raxos\Terminal\Collision
  * @since 1.0.1
  */
-final readonly class Collision implements Provider
+final readonly class Collision
 {
+
+    public Handler $handler;
+    public Run $run;
 
     /**
      * Collision constructor.
@@ -23,35 +25,24 @@ final readonly class Collision implements Provider
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public function __construct(
-        public Handler $handler = new Handler(),
-        public Run $run = new Run()
-    )
+    public function __construct()
     {
+        $this->handler = new Handler();
+        $this->run = new Run();
     }
 
     /**
-     * {@inheritdoc}
+     * Register the error handler.
+     *
+     * @return void
      * @author Bas Milius <bas@mili.us>
-     * @since 1.0.1
+     * @since 09-08-2024
      */
-    public function getHandler(): Handler
-    {
-        return $this->handler;
-    }
-
-    /**
-     * {@inheritdoc}
-     * @author Bas Milius <bas@mili.us>
-     * @since 1.0.1
-     */
-    public function register(): Provider
+    public function register(): void
     {
         $this->run
             ->pushHandler($this->handler)
             ->register();
-
-        return $this;
     }
 
 }

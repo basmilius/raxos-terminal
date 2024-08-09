@@ -78,7 +78,7 @@ final class Parser
                     } else {
                         $value = $cursor->match('/^([a-zA-Z\d.\\\]+)/');
                     }
-                } else if ($cursor->peek() === ' ' || $cursor->peek() === '') {
+                } elseif ($cursor->peek() === ' ' || $cursor->peek() === '') {
                     // --key
                     // --key value
 
@@ -86,7 +86,7 @@ final class Parser
 
                     if ($cursor->peek() === '"' || $cursor->peek() === "'") {
                         $value = $cursor->quotedString();
-                    } else if (($str = $cursor->match('/^([a-zA-Z\d.\\\]+)/')) !== null) {
+                    } elseif (($str = $cursor->match('/^([a-zA-Z\d.\\\]+)/')) !== null) {
                         $value = $str;
                     } else {
                         $value = true;
@@ -95,26 +95,26 @@ final class Parser
 
                 $result['options'][$key] = $value;
 
-            } else if ($cursor->peek() === '"' || $cursor->peek() === "'") {
+            } elseif ($cursor->peek() === '"' || $cursor->peek() === "'") {
 
                 // "string"
                 // 'string'
 
                 $result['arguments'][] = $cursor->quotedString();
 
-            } else if ($result['command'] === null && $word = $cursor->match('/^\w+/')) {
+            } elseif ($result['command'] === null && $word = $cursor->match('/^\w+/')) {
 
                 // string (Name of our command)
 
                 $result['command'] = $word;
 
-            } else if ($word = $cursor->match('/^([\w.\\\:\/]+)/')) {
+            } elseif ($word = $cursor->match('/^([\w.\\\:\/]+)/')) {
 
                 // string (As an argument)
 
                 $result['arguments'][] = $word;
 
-            } else if ($cursor->peek() === '-') {
+            } elseif ($cursor->peek() === '-') {
 
                 // -key
                 // -key=value
@@ -134,7 +134,7 @@ final class Parser
                     } else {
                         $value = $cursor->match('/^([a-zA-Z\d.\\\]+)/');
                     }
-                } else if ($cursor->peek() === ' ' || $cursor->peek() === '') {
+                } elseif ($cursor->peek() === ' ' || $cursor->peek() === '') {
                     // -key
                     // -key value
 
@@ -142,7 +142,7 @@ final class Parser
 
                     if ($cursor->peek() === '"' || $cursor->peek() === "'") {
                         $value = $cursor->quotedString();
-                    } else if (($str = $cursor->match('/^([a-zA-Z\d.\\\]+)/')) !== null) {
+                    } elseif (($str = $cursor->match('/^([a-zA-Z\d.\\\]+)/')) !== null) {
                         $value = $str;
                     } else {
                         $value = true;

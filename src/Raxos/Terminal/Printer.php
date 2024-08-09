@@ -12,6 +12,4 @@ use League\CLImate\CLImate;
  * @package Raxos\Terminal
  * @since 1.0.1
  */
-final class Printer extends CLImate
-{
-}
+final class Printer extends CLImate {}

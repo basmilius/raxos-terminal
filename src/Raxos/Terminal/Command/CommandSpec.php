@@ -26,9 +26,7 @@ final class CommandSpec
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public function __construct(private readonly string $name)
-    {
-    }
+    public function __construct(private readonly string $name) {}
 
     /**
      * Gets the description.
