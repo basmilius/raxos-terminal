@@ -36,7 +36,7 @@ final readonly class Collision
      *
      * @return void
      * @author Bas Milius <bas@mili.us>
-     * @since 09-08-2024
+     * @since 1.0.17
      */
     public function register(): void
     {

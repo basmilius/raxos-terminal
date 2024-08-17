@@ -27,7 +27,7 @@ final class HelpCommand extends AbstractCommand
     public static function spec(): CommandSpec
     {
         return CommandSpec::make('help')
-            ->description('Displays the help screen.');
+            ->description('Displays this screen.');
     }
 
     /**

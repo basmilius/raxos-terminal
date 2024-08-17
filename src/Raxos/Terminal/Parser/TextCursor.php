@@ -29,7 +29,9 @@ final class TextCursor
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public function __construct(private readonly string $text)
+    public function __construct(
+        private readonly string $text
+    )
     {
         $this->maxLength = mb_strlen($this->text);
     }
