@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Raxos\Terminal\Collision;
 
 use NunoMaduro\Collision\Handler;
+use Symfony\Component\Console\Output\OutputInterface;
 use Whoops\Run;
 
 /**
@@ -29,6 +30,8 @@ final readonly class Collision
     {
         $this->handler = new Handler();
         $this->run = new Run();
+
+        $this->handler->getWriter()->getOutput()->setVerbosity(OutputInterface::VERBOSITY_VERY_VERBOSE);
     }
 
     /**
