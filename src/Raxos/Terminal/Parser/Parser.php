@@ -86,7 +86,7 @@ final class Parser
 
                     if ($cursor->peek() === '"' || $cursor->peek() === "'") {
                         $value = $cursor->quotedString();
-                    } elseif (($str = $cursor->match('/^([a-zA-Z\d.\\\]+)/')) !== null) {
+                    } elseif (($str = $cursor->match('/^([a-zA-Z-\d.\\\]+)/')) !== null) {
                         $value = $str;
                     } else {
                         $value = true;
