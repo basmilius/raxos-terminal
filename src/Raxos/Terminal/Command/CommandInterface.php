@@ -17,8 +17,8 @@ interface CommandInterface
 {
 
     /**
-     * Executes the command with the given arguments. If something goes wrong
-     * an TerminalException is thrown.
+     * Executes the command with the given arguments. If something goes wrong, a
+     * TerminalException is thrown.
      *
      * @param array $arguments
      * @param array $options

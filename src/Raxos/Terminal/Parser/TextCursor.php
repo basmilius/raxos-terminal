@@ -144,7 +144,7 @@ final class TextCursor
     }
 
     /**
-     * Peek for the given amount of characters.
+     * Peek for the given number of characters.
      *
      * @param int $length
      *
