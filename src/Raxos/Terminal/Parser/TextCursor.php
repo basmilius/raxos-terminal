@@ -18,8 +18,8 @@ use function stripslashes;
 final class TextCursor
 {
 
-    private int $maxLength;
-    private int $position = 0;
+    public readonly int $maxLength;
+    public private(set) int $position = 0;
 
     /**
      * TextCursor constructor.
@@ -30,34 +30,10 @@ final class TextCursor
      * @since 1.0.1
      */
     public function __construct(
-        private readonly string $text
+        public readonly string $text
     )
     {
         $this->maxLength = mb_strlen($this->text);
-    }
-
-    /**
-     * Gets the current position.
-     *
-     * @return int
-     * @author Bas Milius <bas@mili.us>
-     * @since 1.0.1
-     */
-    public function getPosition(): int
-    {
-        return $this->position;
-    }
-
-    /**
-     * Gets the text.
-     *
-     * @return string
-     * @author Bas Milius <bas@mili.us>
-     * @since 1.0.1
-     */
-    public function getText(): string
-    {
-        return $this->text;
     }
 
     /**

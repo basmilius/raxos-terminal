@@ -19,7 +19,14 @@ use function is_subclass_of;
 class Terminal implements TerminalInterface
 {
 
-    private array $commands = [HelpCommand::class];
+    /**
+     * {@inheritdoc}
+     * @author Bas Milius <bas@mili.us>
+     * @since 1.4.0
+     */
+    public private(set) array $commands = [
+        'help' => HelpCommand::class
+    ];
 
     /**
      * Terminal constructor.
@@ -43,25 +50,14 @@ class Terminal implements TerminalInterface
         }
 
         $spec = $commandClass::spec();
-        $name = $spec->getName();
 
-        if (isset($this->commands[$name])) {
+        if (isset($this->commands[$spec->name])) {
             throw TerminalException::duplicateCommand($commandClass);
         }
 
-        $this->commands[$name] = $commandClass;
+        $this->commands[$spec->name] = $commandClass;
 
         return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     * @author Bas Milius <bas@mili.us>
-     * @since 1.0.17
-     */
-    public function getCommands(): array
-    {
-        return $this->commands;
     }
 
     /**
@@ -82,13 +78,13 @@ class Terminal implements TerminalInterface
                 $commandClass = null;
 
                 /** @var AbstractCommand $command */
-                foreach ($this->commands as $command) {
-                    $spec = $command::spec();
-
-                    if ($spec->getName() === $cl['command']) {
-                        $commandClass = $command;
-                        break;
+                foreach ($this->commands as $name => $command) {
+                    if ($name !== $cl['command']) {
+                        continue;
                     }
+
+                    $commandClass = $command;
+                    break;
                 }
 
                 if ($commandClass === null) {

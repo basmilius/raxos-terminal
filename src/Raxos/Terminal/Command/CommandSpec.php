@@ -13,10 +13,10 @@ namespace Raxos\Terminal\Command;
 final class CommandSpec
 {
 
-    private ?string $description = null;
-    private ?string $example = null;
-    private array $arguments = [];
-    private array $options = [];
+    public private(set) ?string $description = null;
+    public private(set) ?string $example = null;
+    public private(set) array $arguments = [];
+    public private(set) array $options = [];
 
     /**
      * CommandSpec constructor.
@@ -26,67 +26,7 @@ final class CommandSpec
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public function __construct(private readonly string $name) {}
-
-    /**
-     * Gets the description.
-     *
-     * @return string|null
-     * @author Bas Milius <bas@mili.us>
-     * @since 1.0.1
-     */
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    /**
-     * Gets the example.
-     *
-     * @return string|null
-     * @author Bas Milius <bas@mili.us>
-     * @since 1.0.1
-     */
-    public function getExample(): ?string
-    {
-        return $this->example;
-    }
-
-    /**
-     * Gets the name.
-     *
-     * @return string|null
-     * @author Bas Milius <bas@mili.us>
-     * @since 1.0.1
-     */
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    /**
-     * Gets the arguments.
-     *
-     * @return array
-     * @author Bas Milius <bas@mili.us>
-     * @since 1.0.1
-     */
-    public function getArguments(): array
-    {
-        return $this->arguments;
-    }
-
-    /**
-     * Gets the options.
-     *
-     * @return array
-     * @author Bas Milius <bas@mili.us>
-     * @since 1.0.1
-     */
-    public function getOptions(): array
-    {
-        return $this->options;
-    }
+    public function __construct(public readonly string $name) {}
 
     /**
      * Sets the description.

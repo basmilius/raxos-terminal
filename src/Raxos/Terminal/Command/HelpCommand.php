@@ -46,24 +46,24 @@ final class HelpCommand extends AbstractCommand
         $this->printer->out('This terminal is based on raxos/terminal.');
 
         /** @var AbstractCommand $command */
-        foreach ($this->terminal->getCommands() as $command) {
+        foreach ($this->terminal->commands as $name => $command) {
             $spec = $command::spec();
-            $arguments = $spec->getArguments();
-            $options = $spec->getOptions();
-            $title = [$spec->getName()];
+            $arguments = $spec->arguments;
+            $options = $spec->options;
+            $title = ["<cyan>{$name}</cyan>"];
 
             foreach (array_keys($arguments) as $argumentKey) {
-                $title[] = "<light_gray>[{$argumentKey}]</light_gray>";
+                $title[] = "<cyan>[{$argumentKey}]</cyan>";
             }
 
             $title = implode(' ', $title);
 
             $this->printer->br();
             $this->printer->out($title);
-            $this->printer->tab()->darkGray($spec->getDescription());
+            $this->printer->tab()->lightGray($spec->description);
 
-            if ($spec->getExample() !== null) {
-                $this->printer->tab()->darkGray('Example: ' . $argv[0] . ' ' . $spec->getExample());
+            if ($spec->example !== null) {
+                $this->printer->tab()->darkGray('Example: ' . $argv[0] . ' ' . $spec->example);
             }
 
             foreach ($options as $option => [, $description]) {

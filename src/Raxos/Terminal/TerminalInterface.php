@@ -16,6 +16,17 @@ interface TerminalInterface
 {
 
     /**
+     * Gets all registered commands.
+     *
+     * @return array<string, class-string<AbstractCommand>>
+     * @author Bas Milius <bas@mili.us>
+     * @since 1.4.0
+     */
+    public array $commands {
+        get;
+    }
+
+    /**
      * Adds the given command to the terminal.
      *
      * @param string $commandClass
@@ -26,15 +37,6 @@ interface TerminalInterface
      * @since 1.0.17
      */
     public function addCommand(string $commandClass): self;
-
-    /**
-     * Gets all registered commands.
-     *
-     * @return class-string<AbstractCommand>[]
-     * @author Bas Milius <bas@mili.us>
-     * @since 1.0.17
-     */
-    public function getCommands(): array;
 
     /**
      * Executes based on the given arguments.
