@@ -1,26 +1,26 @@
 {
-	"name": "raxos/terminal",
-	"description": "Base classes for custom terminals with command support.",
-	"license": "mit",
+    "name": "raxos/terminal",
+    "description": "Base classes for custom terminals with command support.",
+    "license": "mit",
     "minimum-stability": "dev",
-    "prefer-stable" : true,
-	"type": "library",
-	"authors": [
-		{
-			"name": "Bas Milius",
-			"email": "bas@mili.us"
-		}
-	],
-	"autoload": {
-		"psr-4": {
-			"Raxos\\Terminal\\": "src/Raxos/Terminal"
-		}
-	},
-	"config": {
-		"platform": {
-			"php": "8.4"
-		}
-	},
+    "prefer-stable": true,
+    "type": "library",
+    "authors": [
+        {
+            "name": "Bas Milius",
+            "email": "bas@mili.us"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Raxos\\Terminal\\": "src/Raxos/Terminal"
+        }
+    },
+    "config": {
+        "platform": {
+            "php": "8.4"
+        }
+    },
     "repositories": [
         {
             "type": "path",
@@ -34,11 +34,11 @@
         "symfony/polyfill-intl-normalizer": "*",
         "symfony/polyfill-mbstring": "*"
     },
-	"require": {
-        "ext-mbstring" : "*",
-		"jetbrains/phpstorm-attributes": "^1.2",
+    "require": {
+        "ext-mbstring": "*",
+        "jetbrains/phpstorm-attributes": "^1.2",
         "league/climate": "^3.10",
-        "nunomaduro/collision": "^8.5",
+        "nunomaduro/collision": "^8.6",
         "raxos/foundation": "*"
-	}
+    }
 }

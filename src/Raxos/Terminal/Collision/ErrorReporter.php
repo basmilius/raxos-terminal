@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Raxos\Terminal\Collision;
 
 use Exception;
+use NunoMaduro\Collision;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class ErrorReporter
@@ -25,26 +27,14 @@ final class ErrorReporter
      */
     public static function exception(Exception $err): void
     {
-        $errorReporting = self::collision();
-        $errorReporting->handler->setException($err);
-        $errorReporting->handler->setInspector(new Inspector($err));
-        $errorReporting->handler->handle();
-    }
+        $provider = new Collision\Provider();
+        $provider->register();
 
-    /**
-     * Gets the Collision instance.
-     *
-     * @return Collision
-     * @author Bas Milius <bas@mili.us>
-     * @since 1.0.1
-     */
-    private static function collision(): Collision
-    {
-        static $errorReporter = null;
-
-        $errorReporter ??= new Collision();
-
-        return $errorReporter;
+        $handler = $provider->getHandler();
+        $handler->getWriter()->getOutput()->setVerbosity(OutputInterface::VERBOSITY_VERY_VERBOSE);
+        $handler->setException($err);
+        $handler->setInspector(new Inspector($err));
+        $handler->handle();
     }
 
 }
