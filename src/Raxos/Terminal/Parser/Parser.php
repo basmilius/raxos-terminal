@@ -22,6 +22,10 @@ use function str_replace;
 final class Parser
 {
 
+    private const string RE_ARG_KEY = '/^[\w-]+/';
+    private const string RE_ARG_VALUE = '/^([\w@:\-.\\\]+)/';
+    private const string RE_COMMAND = '/^[\w:-]+/';
+
     /**
      * Parses the given command.
      *
@@ -52,7 +56,6 @@ final class Parser
         ];
 
         do {
-
             if ($cursor->isSpace()) {
                 $cursor->advance();
                 continue;
@@ -65,7 +68,7 @@ final class Parser
                 // --key value
 
                 $cursor->advanceBy(2);
-                $key = $cursor->match('/^\w+/');
+                $key = $cursor->match(self::RE_ARG_KEY);
                 $value = null;
 
                 if ($cursor->peek() === '=') {
@@ -76,7 +79,7 @@ final class Parser
                     if ($cursor->peek() === '"' || $cursor->peek() === "'") {
                         $value = $cursor->quotedString();
                     } else {
-                        $value = $cursor->match('/^([a-zA-Z\d.\\\]+)/');
+                        $value = $cursor->match(self::RE_ARG_VALUE);
                     }
                 } elseif ($cursor->peek() === ' ' || $cursor->peek() === '') {
                     // --key
@@ -86,7 +89,44 @@ final class Parser
 
                     if ($cursor->peek() === '"' || $cursor->peek() === "'") {
                         $value = $cursor->quotedString();
-                    } elseif (($str = $cursor->match('/^([a-zA-Z-\d.\\\]+)/')) !== null) {
+                    } elseif (($str = $cursor->match(self::RE_ARG_VALUE)) !== null) {
+                        $value = $str;
+                    } else {
+                        $value = true;
+                    }
+                }
+
+                $result['options'][$key] = $value;
+
+            } elseif ($cursor->peek() === '-') {
+
+                // -key
+                // -key=value
+                // -key value
+
+                $cursor->advance();
+                $key = $cursor->match(self::RE_ARG_KEY);
+                $value = null;
+
+                if ($cursor->peek() === '=') {
+                    // -key=value
+
+                    $cursor->advance();
+
+                    if ($cursor->peek() === '"' || $cursor->peek() === "'") {
+                        $value = $cursor->quotedString();
+                    } else {
+                        $value = $cursor->match(self::RE_ARG_VALUE);
+                    }
+                } elseif ($cursor->peek() === ' ' || $cursor->peek() === '') {
+                    // -key
+                    // -key value
+
+                    $cursor->advance();
+
+                    if ($cursor->peek() === '"' || $cursor->peek() === "'") {
+                        $value = $cursor->quotedString();
+                    } elseif (($str = $cursor->match(self::RE_ARG_VALUE)) !== null) {
                         $value = $str;
                     } else {
                         $value = true;
@@ -102,61 +142,23 @@ final class Parser
 
                 $result['arguments'][] = $cursor->quotedString();
 
-            } elseif ($result['command'] === null && $word = $cursor->match('/^\w+/')) {
+            } elseif ($result['command'] === null && $word = $cursor->match(self::RE_COMMAND)) {
 
                 // string (Name of our command)
 
                 $result['command'] = $word;
 
-            } elseif ($word = $cursor->match('/^([\w.\\\:\/]+)/')) {
+            } elseif ($word = $cursor->match(self::RE_ARG_VALUE)) {
 
                 // string (As an argument)
 
                 $result['arguments'][] = $word;
-
-            } elseif ($cursor->peek() === '-') {
-
-                // -key
-                // -key=value
-                // -key value
-
-                $cursor->advance();
-                $key = $cursor->match('/^\w+/');
-                $value = null;
-
-                if ($cursor->peek() === '=') {
-                    // -key=value
-
-                    $cursor->advance();
-
-                    if ($cursor->peek() === '"' || $cursor->peek() === "'") {
-                        $value = $cursor->quotedString();
-                    } else {
-                        $value = $cursor->match('/^([a-zA-Z\d.\\\]+)/');
-                    }
-                } elseif ($cursor->peek() === ' ' || $cursor->peek() === '') {
-                    // -key
-                    // -key value
-
-                    $cursor->advance();
-
-                    if ($cursor->peek() === '"' || $cursor->peek() === "'") {
-                        $value = $cursor->quotedString();
-                    } elseif (($str = $cursor->match('/^([a-zA-Z\d.\\\]+)/')) !== null) {
-                        $value = $str;
-                    } else {
-                        $value = true;
-                    }
-                }
-
-                $result['options'][$key] = $value;
 
             } else {
 
                 throw new RuntimeException(sprintf('Could not parse %s', $cursor->remainder()));
 
             }
-
         } while (!$cursor->atEnd());
 
         return $result;
