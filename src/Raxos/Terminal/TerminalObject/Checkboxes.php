@@ -36,7 +36,7 @@ final class Checkboxes extends BaseCheckboxes
      * {@inheritdoc}
      * @return array
      * @author Bas Milius <bas@mili.us>
-     * @since 10-03-2025
+     * @since 1.6.0
      */
     public function prompt(): array
     {
