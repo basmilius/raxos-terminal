@@ -36,7 +36,7 @@ final class CheckboxGroup extends BaseCheckboxGroup
                 continue;
             }
 
-            $checkbox->setChecked(true);
+            $checkbox->setChecked();
         }
     }
 

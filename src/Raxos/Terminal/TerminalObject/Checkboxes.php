@@ -27,7 +27,7 @@ final class Checkboxes extends BaseCheckboxes
      * @author Bas Milius <bas@mili.us>
      * @since 1.6.0
      */
-    public function __construct($prompt, array $options, private array $selected = [], ?ReaderInterface $reader = null)
+    public function __construct($prompt, array $options, private readonly array $selected = [], ?ReaderInterface $reader = null)
     {
         parent::__construct($prompt, $options, $reader);
     }
