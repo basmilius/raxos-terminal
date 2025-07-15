@@ -13,7 +13,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Raxos\\Terminal\\": "src/Raxos/Terminal"
+            "Raxos\\Terminal\\": "src/"
         }
     },
     "config": {
@@ -38,7 +38,7 @@
         "ext-mbstring": "*",
         "jetbrains/phpstorm-attributes": "^1.2",
         "league/climate": "^3.10",
-        "nunomaduro/collision": "^8.6",
+        "nunomaduro/collision": "^8.8",
         "raxos/foundation": "*"
     }
 }

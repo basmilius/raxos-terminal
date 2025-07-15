@@ -124,6 +124,8 @@ final readonly class Data
 
         try {
             $classRef = new ReflectionClass($commandClass);
+
+            /** @var ReflectionAttribute<Command> $command */
             $command = $classRef->getAttributes(Command::class)[0];
             $command = $command?->newInstance() ?? throw CommandException::invalid($commandClass, 'The command is missing a Command attribute.');
 

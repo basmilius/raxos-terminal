@@ -3,34 +3,35 @@ declare(strict_types=1);
 
 namespace Raxos\Terminal\Command;
 
-use Raxos\Terminal\Attribute\Option;
+use Raxos\Foundation\Contract\OptionInterface;
+use Raxos\Terminal\Attribute\Argument;
 
 /**
- * Class OptionData
+ * Class ArgumentData
  *
  * @author Bas Milius <bas@mili.us>
  * @package Raxos\Terminal\Command
  * @since 1.6.0
  */
-final readonly class OptionData
+final readonly class ArgumentData
 {
 
     /**
-     * OptionData constructor.
+     * ArgumentData constructor.
      *
-     * @param Option $option
+     * @param Argument $argument
      * @param string $name
      * @param string[] $type
-     * @param \Raxos\Foundation\Option\Option $defaultValue
+     * @param OptionInterface $defaultValue
      *
      * @author Bas Milius <bas@mili.us>
      * @since 1.6.0
      */
     public function __construct(
-        public Option $option,
+        public Argument $argument,
         public string $name,
         public array $type,
-        public \Raxos\Foundation\Option\Option $defaultValue
+        public OptionInterface $defaultValue
     ) {}
 
 }
