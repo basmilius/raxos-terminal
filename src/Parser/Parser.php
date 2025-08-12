@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Raxos\Terminal\Parser;
 
-use JetBrains\PhpStorm\ArrayShape;
 use RuntimeException;
 use function array_map;
 use function array_shift;
@@ -31,29 +30,20 @@ final class Parser
      *
      * @param string $rawCommand
      *
-     * @return array|null
+     * @return ParserResult|null
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    #[ArrayShape([
-        'raw' => 'string',
-        'command' => 'string|null',
-        'arguments' => 'string[]',
-        'options' => 'array<string, string>'
-    ])]
-    public static function parse(string $rawCommand): ?array
+    public static function parse(string $rawCommand): ?ParserResult
     {
         if (empty($rawCommand)) {
             return null;
         }
 
         $cursor = new TextCursor($rawCommand);
-        $result = [
-            'raw' => $rawCommand,
-            'command' => null,
-            'arguments' => [],
-            'options' => []
-        ];
+        $command = null;
+        $arguments = [];
+        $options = [];
 
         do {
             if ($cursor->isSpace()) {
@@ -96,7 +86,7 @@ final class Parser
                     }
                 }
 
-                $result['options'][$key] = $value;
+                $options[$key] = $value;
 
             } elseif ($cursor->peek() === '-') {
 
@@ -133,26 +123,26 @@ final class Parser
                     }
                 }
 
-                $result['options'][$key] = $value;
+                $options[$key] = $value;
 
             } elseif ($cursor->peek() === '"' || $cursor->peek() === "'") {
 
                 // "string"
                 // 'string'
 
-                $result['arguments'][] = $cursor->quotedString();
+                $arguments[] = $cursor->quotedString();
 
-            } elseif ($result['command'] === null && $word = $cursor->match(self::RE_COMMAND)) {
+            } elseif ($command === null && $word = $cursor->match(self::RE_COMMAND)) {
 
                 // string (Name of our command)
 
-                $result['command'] = $word;
+                $command = $word;
 
             } elseif ($word = $cursor->match(self::RE_ARG_VALUE)) {
 
                 // string (As an argument)
 
-                $result['arguments'][] = $word;
+                $arguments[] = $word;
 
             } else {
 
@@ -161,23 +151,22 @@ final class Parser
             }
         } while (!$cursor->atEnd());
 
-        return $result;
+        return new ParserResult(
+            $rawCommand,
+            $command,
+            $arguments,
+            $options
+        );
     }
 
     /**
      * Parses the command from the command line.
      *
-     * @return array|null
+     * @return ParserResult|null
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    #[ArrayShape([
-        'raw' => 'string',
-        'command' => 'string|null',
-        'arguments' => 'string[]',
-        'options' => 'array<string, string>'
-    ])]
-    public static function parseFromArgs(): ?array
+    public static function parseFromArgs(): ?ParserResult
     {
         $arguments = $GLOBALS['argv'];
         array_shift($arguments);

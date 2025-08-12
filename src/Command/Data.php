@@ -5,11 +5,12 @@ namespace Raxos\Terminal\Command;
 
 use Raxos\Foundation\Util\ReflectionUtil;
 use Raxos\Terminal\Attribute\{Argument, Command, Option};
-use Raxos\Terminal\Contract\{AttributeInterface, CommandInterface};
+use Raxos\Terminal\Contract\{AttributeInterface, CommandInterface, MiddlewareInterface};
 use Raxos\Terminal\Error\{CommandException, TerminalException};
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;
+use function array_map;
 use function in_array;
 
 /**
@@ -30,6 +31,7 @@ final readonly class Data
      * @param class-string<TCommand> $class
      * @param Command $command
      * @param ArgumentData[] $arguments
+     * @param MiddlewareInterface[] $middlewares
      * @param OptionData[] $options
      *
      * @author Bas Milius <bas@mili.us>
@@ -39,14 +41,15 @@ final readonly class Data
         public string $class,
         public Command $command,
         public array $arguments,
+        public array $middlewares,
         public array $options
     ) {}
 
     /**
      * Converts the arguments and options to an array of arguments.
      *
-     * @param array $arguments
-     * @param array $options
+     * @param string[] $arguments
+     * @param array<string, string> $options
      *
      * @return array
      * @throws CommandException
@@ -132,6 +135,9 @@ final readonly class Data
             $arguments = [];
             $options = [];
 
+            $middlewares = $classRef->getAttributes(MiddlewareInterface::class, ReflectionAttribute::IS_INSTANCEOF);
+            $middlewares = array_map(static fn(ReflectionAttribute $attribute) => $attribute->newInstance(), $middlewares);
+
             $constructorRef = $classRef->getConstructor();
 
             if ($constructorRef !== null) {
@@ -170,7 +176,7 @@ final readonly class Data
                 }
             }
 
-            return new self($commandClass, $command, $arguments, $options);
+            return new self($commandClass, $command, $arguments, $middlewares, $options);
         } catch (ReflectionException $err) {
             throw CommandException::reflectionFailed($commandClass, $err);
         }

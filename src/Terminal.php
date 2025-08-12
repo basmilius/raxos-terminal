@@ -3,13 +3,15 @@ declare(strict_types=1);
 
 namespace Raxos\Terminal;
 
+use Closure;
 use Exception;
 use InvalidArgumentException;
 use Raxos\Terminal\Collision\ErrorReporter;
 use Raxos\Terminal\Command\{Data, HelpCommand};
-use Raxos\Terminal\Contract\{CommandInterface, TerminalInterface};
+use Raxos\Terminal\Contract\{CommandInterface, MiddlewareInterface, TerminalInterface};
 use Raxos\Terminal\Error\CommandException;
 use Raxos\Terminal\Parser\Parser;
+use Raxos\Terminal\Parser\ParserResult;
 use function is_subclass_of;
 
 /**
@@ -51,19 +53,12 @@ class Terminal implements TerminalInterface
         $result = Parser::parseFromArgs();
 
         try {
-            if ($result === null || $result['command'] === null) {
-                $command = new HelpCommand();
+            if ($result === null || $result->command === null) {
+                $this->run(HelpCommand::class);
             } else {
-                $name = $result['command'];
-
-                $class = $this->commands[$name] ?? throw CommandException::notFound($name);
-                $data = Data::parseCommand($class);
-                $args = $data->toArgs($result['arguments'], $result['options']);
-
-                $command = new $class(...$args);
+                $commandClass = $this->commands[$result->command] ?? throw CommandException::notFound($result->command);
+                $this->run($commandClass, $result);
             }
-
-            $command->execute($this, $this->printer);
         } catch (InvalidArgumentException $err) {
             $this->printer->incorrect($err->getMessage());
             $this->exit(-1);
@@ -71,7 +66,7 @@ class Terminal implements TerminalInterface
             $this->printer->incorrect($err->getMessage());
 
             try {
-                $help = new HelpCommand($result['command']);
+                $help = new HelpCommand($result->command);
                 $help->execute($this, $this->printer, false);
             } catch (Exception) {
             }
@@ -113,6 +108,49 @@ class Terminal implements TerminalInterface
         $this->commands[$data->command->name] = $commandClass;
 
         return $this;
+    }
+
+    /**
+     * Runs a command.
+     *
+     * @param string $commandClass
+     * @param ParserResult|null $result
+     *
+     * @return void
+     * @throws CommandException
+     * @throws Error\TerminalException
+     * @author Bas Milius <bas@mili.us>
+     * @since 2.0.0
+     */
+    private function run(string $commandClass, ?ParserResult $result = null): void
+    {
+        $data = Data::parseCommand($commandClass);
+        $args = $data->toArgs($result?->arguments ?? [], $result?->options ?? []);
+
+        $command = new $commandClass(...$args);
+
+        $this->closure($data->middlewares, $command)();
+    }
+
+    /**
+     * Returns a command execution stack.
+     *
+     * @param MiddlewareInterface[] $middlewares
+     * @param CommandInterface $command
+     *
+     * @return Closure
+     * @author Bas Milius <bas@mili.us>
+     * @since 2.0.0
+     */
+    private function closure(array $middlewares, CommandInterface $command): Closure
+    {
+        if (empty($middlewares)) {
+            return fn() => $command->execute($this, $this->printer);
+        }
+
+        $middleware = array_shift($middlewares);
+
+        return fn() => $middleware->handle($command, $this, $this->printer, $this->closure($middlewares, $command));
     }
 
 }
