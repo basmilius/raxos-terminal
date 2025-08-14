@@ -5,7 +5,7 @@ namespace Raxos\Terminal\Command;
 
 use Composer\InstalledVersions;
 use Raxos\Foundation\Collection\ArrayList;
-use Raxos\Terminal\Attribute\{Argument, Command};
+use Raxos\Terminal\Attribute\{Argument, Command, Option};
 use Raxos\Terminal\Contract\{CommandInterface, TerminalInterface};
 use Raxos\Terminal\Internal\Data;
 use Raxos\Terminal\Printer;
@@ -41,7 +41,10 @@ final readonly class HelpCommand implements CommandInterface
      */
     public function __construct(
         #[Argument(description: 'Show the detailed help for a specific command.')]
-        public ?string $command = null
+        public ?string $command = null,
+
+        #[Option(description: 'Always show the extended information.')]
+        public bool $extended = false
     ) {}
 
     /**
@@ -77,7 +80,7 @@ final readonly class HelpCommand implements CommandInterface
 
                 $title = implode(' ', $title);
 
-                if ($this->command === null) {
+                if ($this->command === null && !$this->extended) {
                     if ($index === 0) {
                         $printer->br();
                     }
@@ -90,7 +93,7 @@ final readonly class HelpCommand implements CommandInterface
                     ], 2);
                 } else {
                     $printer->br();
-                    $printer->bold()->out($title);
+                    $printer->bold()->underline()->out($title);
 
                     if ($command->command->description !== null) {
                         $printer->out($command->command->description);
@@ -102,20 +105,53 @@ final readonly class HelpCommand implements CommandInterface
 
                     if (!empty($command->arguments)) {
                         $printer->br();
-                        $printer->tab()->bold('Arguments');
 
-                        foreach ($command->arguments as $argument) {
+                        foreach ($command->arguments as $index => $argument) {
+                            $prefix = $index === 0 ? 'Arguments' : '';
+                            $prefix = str_pad($prefix, 12);
+
                             $optional = !$argument->defaultValue->isEmpty || in_array('null', $argument->type, true);
-                            $printer->tab()->darkGray(str_pad($argument->name, 16) . ' ' . $argument->argument->description . ($optional ? ' (optional)' : ''));
+                            $str = str_pad($argument->name, 16) . ' ' . $argument->argument->description . ($optional ? ' (optional)' : '');
+
+                            $printer->out("<bold>{$prefix}</bold><dark_gray>{$str}</dark_gray>");
                         }
                     }
 
-                    if (!empty($command->options)) {
-                        $printer->br();
-                        $printer->tab()->bold('Options');
+                    if (!empty($command->options) || !empty($command->middlewares)) {
+                        $options = $command->options ?? [];
 
-                        foreach ($command->options as $option) {
-                            $printer->tab()->darkGray(str_pad("--{$option->name}", 16) . ' ' . $option->option->description);
+                        foreach ($command->middlewares as $middleware) {
+                            $middlewareData = Data::parseMiddleware($middleware::class);
+
+                            foreach ($middlewareData->options as $option) {
+                                $options[] = $option;
+                            }
+                        }
+
+                        if (!empty($options)) {
+                            $printer->br();
+
+                            foreach ($options as $index => $option) {
+                                $prefix = $index === 0 ? 'Options' : '';
+                                $prefix = str_pad($prefix, 12);
+
+                                $str = str_pad("--{$option->name}", 16) . ' ' . $option->option->description;
+
+                                $printer->out("<bold>{$prefix}</bold><dark_gray>{$str}</dark_gray>");
+                            }
+                        }
+                    }
+
+                    if (!empty($command->middlewares)) {
+                        $printer->br();
+
+                        foreach ($command->middlewares as $index => $middleware) {
+                            $prefix = $index === 0 ? 'Middleware' : '';
+                            $prefix = str_pad($prefix, 12);
+
+                            $str = $middleware::class;
+
+                            $printer->out("<bold>{$prefix}</bold><dark_gray>{$str}</dark_gray>");
                         }
                     }
                 }

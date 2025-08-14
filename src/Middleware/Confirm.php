@@ -20,7 +20,7 @@ use Raxos\Terminal\Printer;
 final readonly class Confirm implements MiddlewareInterface
 {
 
-    #[Option(description: 'Skip the confirmation.', default: false)]
+    #[Option(description: 'Force the operation, bypassing confirmations and safety checks.', default: false)]
     public bool $force;
 
     /**
