@@ -35,6 +35,7 @@ final readonly class HelpCommand implements CommandInterface
      * HelpCommand constructor.
      *
      * @param string|null $command
+     * @param bool $extended
      *
      * @author Bas Milius <bas@mili.us>
      * @since 1.6.0
