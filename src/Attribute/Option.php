@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Raxos\Terminal\Attribute;
 
 use Attribute;
+use Raxos\Foundation\Option\None;
 use Raxos\Terminal\Contract\AttributeInterface;
 
 /**
@@ -13,7 +14,7 @@ use Raxos\Terminal\Contract\AttributeInterface;
  * @package Raxos\Terminal\Attribute
  * @since 1.6.0
  */
-#[Attribute(Attribute::TARGET_PARAMETER)]
+#[Attribute(Attribute::TARGET_PARAMETER | Attribute::TARGET_PROPERTY)]
 final readonly class Option implements AttributeInterface
 {
 
@@ -23,6 +24,7 @@ final readonly class Option implements AttributeInterface
      * @param string|null $name
      * @param string|null $description
      * @param string|null $example
+     * @param mixed $default
      *
      * @author Bas Milius <bas@mili.us>
      * @since 1.6.0
@@ -30,7 +32,8 @@ final readonly class Option implements AttributeInterface
     public function __construct(
         public ?string $name = null,
         public ?string $description = null,
-        public ?string $example = null
+        public ?string $example = null,
+        public mixed $default = None::class
     ) {}
 
 }

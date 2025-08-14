@@ -5,6 +5,7 @@ namespace Raxos\Terminal\Middleware;
 
 use Attribute;
 use Closure;
+use Raxos\Terminal\Attribute\Option;
 use Raxos\Terminal\Contract\{CommandInterface, MiddlewareInterface, TerminalInterface};
 use Raxos\Terminal\Printer;
 
@@ -18,6 +19,9 @@ use Raxos\Terminal\Printer;
 #[Attribute(Attribute::TARGET_CLASS)]
 final readonly class Confirm implements MiddlewareInterface
 {
+
+    #[Option(description: 'Skip the confirmation.', default: false)]
+    public bool $force;
 
     /**
      * Confirm constructor.
@@ -38,10 +42,12 @@ final readonly class Confirm implements MiddlewareInterface
      */
     public function handle(CommandInterface $command, TerminalInterface $terminal, Printer $printer, Closure $next): void
     {
-        $confirm = $printer->confirm($this->message);
+        if (!$this->force) {
+            $confirm = $printer->confirm($this->message);
 
-        if (!$confirm->confirmed()) {
-            return;
+            if (!$confirm->confirmed()) {
+                $terminal->exit(-1);
+            }
         }
 
         $next();

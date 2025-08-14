@@ -48,7 +48,7 @@ final readonly class Caution implements MiddlewareInterface
         $confirm = $printer->confirm($this->message);
 
         if (!$confirm->confirmed()) {
-            return;
+            $terminal->exit(-1);
         }
 
         $next();

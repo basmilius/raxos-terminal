@@ -7,6 +7,7 @@ use Composer\InstalledVersions;
 use Raxos\Foundation\Collection\ArrayList;
 use Raxos\Terminal\Attribute\{Argument, Command};
 use Raxos\Terminal\Contract\{CommandInterface, TerminalInterface};
+use Raxos\Terminal\Internal\Data;
 use Raxos\Terminal\Printer;
 use function array_values;
 use function implode;

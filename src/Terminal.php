@@ -7,11 +7,11 @@ use Closure;
 use Exception;
 use InvalidArgumentException;
 use Raxos\Terminal\Collision\ErrorReporter;
-use Raxos\Terminal\Command\{Data, HelpCommand};
+use Raxos\Terminal\Command\HelpCommand;
 use Raxos\Terminal\Contract\{CommandInterface, MiddlewareInterface, TerminalInterface};
 use Raxos\Terminal\Error\CommandException;
-use Raxos\Terminal\Parser\Parser;
-use Raxos\Terminal\Parser\ParserResult;
+use Raxos\Terminal\Internal\Data;
+use Raxos\Terminal\Parser\{Parser, ParserResult};
 use function is_subclass_of;
 
 /**
@@ -125,11 +125,9 @@ class Terminal implements TerminalInterface
     private function run(string $commandClass, ?ParserResult $result = null): void
     {
         $data = Data::parseCommand($commandClass);
-        $args = $data->toArgs($result?->arguments ?? [], $result?->options ?? []);
+        $command = $data->instantiate($result?->arguments ?? [], $result?->options ?? []);
 
-        $command = new $commandClass(...$args);
-
-        $this->closure($data->middlewares, $command)();
+        $this->closure($data->middlewares, $command, $result)();
     }
 
     /**
@@ -137,20 +135,26 @@ class Terminal implements TerminalInterface
      *
      * @param MiddlewareInterface[] $middlewares
      * @param CommandInterface $command
+     * @param ParserResult|null $result
      *
      * @return Closure
+     * @throws CommandException
      * @author Bas Milius <bas@mili.us>
      * @since 2.0.0
      */
-    private function closure(array $middlewares, CommandInterface $command): Closure
+    private function closure(array $middlewares, CommandInterface $command, ?ParserResult $result = null): Closure
     {
         if (empty($middlewares)) {
             return fn() => $command->execute($this, $this->printer);
         }
 
         $middleware = array_shift($middlewares);
+        $data = Data::parseMiddleware($middleware::class);
+        $data->inject($middleware, options: $result?->options ?? []);
 
-        return fn() => $middleware->handle($command, $this, $this->printer, $this->closure($middlewares, $command));
+        $next = $this->closure($middlewares, $command, $result);
+
+        return fn() => $middleware->handle($command, $this, $this->printer, $next);
     }
 
 }

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Raxos\Terminal\Command;
+namespace Raxos\Terminal\Internal;
 
 use Raxos\Foundation\Contract\OptionInterface;
 use Raxos\Terminal\Attribute\Argument;
@@ -10,8 +10,10 @@ use Raxos\Terminal\Attribute\Argument;
  * Class ArgumentData
  *
  * @author Bas Milius <bas@mili.us>
- * @package Raxos\Terminal\Command
+ * @package Raxos\Terminal\Internal
  * @since 1.6.0
+ * @internal
+ * @private
  */
 final readonly class ArgumentData
 {
