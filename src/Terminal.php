@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Raxos\Terminal;
 
 use Closure;
-use Exception;
 use InvalidArgumentException;
 use Raxos\Terminal\Collision\ErrorReporter;
 use Raxos\Terminal\Command\HelpCommand;
@@ -12,6 +11,7 @@ use Raxos\Terminal\Contract\{CommandInterface, MiddlewareInterface, TerminalInte
 use Raxos\Terminal\Error\CommandException;
 use Raxos\Terminal\Internal\Data;
 use Raxos\Terminal\Parser\{Parser, ParserResult};
+use Throwable;
 use function is_subclass_of;
 
 /**
@@ -68,11 +68,11 @@ class Terminal implements TerminalInterface
             try {
                 $help = new HelpCommand($result->command);
                 $help->execute($this, $this->printer, false);
-            } catch (Exception) {
+            } catch (Throwable) {
             }
 
             $this->exit(-2);
-        } catch (Exception $err) {
+        } catch (Throwable $err) {
             ErrorReporter::exception($err);
             $this->exit(9);
         }

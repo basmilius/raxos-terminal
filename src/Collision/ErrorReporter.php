@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Raxos\Terminal\Collision;
 
-use Exception;
 use NunoMaduro\Collision;
 use Symfony\Component\Console\Output\OutputInterface;
+use Throwable;
 
 /**
  * Class ErrorReporter
@@ -20,12 +20,12 @@ final class ErrorReporter
     /**
      * Reports the given exception.
      *
-     * @param Exception $err
+     * @param Throwable $err
      *
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public static function exception(Exception $err): void
+    public static function exception(Throwable $err): void
     {
         $provider = new Collision\Provider();
         $provider->register();

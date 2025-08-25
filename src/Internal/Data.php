@@ -111,6 +111,10 @@ final readonly class Data
             $arg = $arguments[$index] ?? null;
 
             if ($arg !== null) {
+                if ($argument->type[0] === 'int') {
+                    $arg = (int)$arg;
+                }
+
                 // todo(Bas): types.
                 $args[$argument->name] = $arg;
                 continue;
@@ -133,6 +137,10 @@ final readonly class Data
             $arg = $options[$option->name] ?? null;
 
             if ($arg !== null) {
+                if ($option->type[0] === 'int') {
+                    $arg = (int)$arg;
+                }
+
                 // todo(Bas): types.
                 $args[$option->name] = $arg;
                 continue;
