@@ -5,10 +5,10 @@ namespace Raxos\Terminal;
 
 use Closure;
 use InvalidArgumentException;
+use Raxos\Contract\Terminal\{CommandExceptionInterface, CommandInterface, MiddlewareInterface, TerminalExceptionInterface, TerminalInterface};
 use Raxos\Terminal\Collision\ErrorReporter;
 use Raxos\Terminal\Command\HelpCommand;
-use Raxos\Terminal\Contract\{CommandInterface, MiddlewareInterface, TerminalInterface};
-use Raxos\Terminal\Error\CommandException;
+use Raxos\Terminal\Error\{CommandNotFoundException, DuplicateCommandException, InvalidCommandException};
 use Raxos\Terminal\Internal\Data;
 use Raxos\Terminal\Parser\{Parser, ParserResult};
 use Throwable;
@@ -56,13 +56,13 @@ class Terminal implements TerminalInterface
             if ($result === null || $result->command === null) {
                 $this->run(HelpCommand::class);
             } else {
-                $commandClass = $this->commands[$result->command] ?? throw CommandException::notFound($result->command);
+                $commandClass = $this->commands[$result->command] ?? throw new CommandNotFoundException($result->command);
                 $this->run($commandClass, $result);
             }
         } catch (InvalidArgumentException $err) {
             $this->printer->incorrect($err->getMessage());
             $this->exit(-1);
-        } catch (CommandException $err) {
+        } catch (CommandExceptionInterface $err) {
             $this->printer->incorrect($err->getMessage());
 
             try {
@@ -96,13 +96,13 @@ class Terminal implements TerminalInterface
     public function register(string $commandClass): static
     {
         if (!is_subclass_of($commandClass, CommandInterface::class)) {
-            throw CommandException::invalid($commandClass);
+            throw new InvalidCommandException($commandClass);
         }
 
         $data = Data::parseCommand($commandClass);
 
         if (isset($this->commands[$data->command->name])) {
-            throw CommandException::duplicate($commandClass);
+            throw new DuplicateCommandException($commandClass);
         }
 
         $this->commands[$data->command->name] = $commandClass;
@@ -117,8 +117,7 @@ class Terminal implements TerminalInterface
      * @param ParserResult|null $result
      *
      * @return void
-     * @throws CommandException
-     * @throws Error\TerminalException
+     * @throws TerminalExceptionInterface
      * @author Bas Milius <bas@mili.us>
      * @since 2.0.0
      */
@@ -138,7 +137,7 @@ class Terminal implements TerminalInterface
      * @param ParserResult|null $result
      *
      * @return Closure
-     * @throws CommandException
+     * @throws CommandExceptionInterface
      * @author Bas Milius <bas@mili.us>
      * @since 2.0.0
      */

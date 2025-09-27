@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Raxos\Terminal\Attribute;
 
 use Attribute;
+use Raxos\Contract\Terminal\AttributeInterface;
 use Raxos\Foundation\Option\None;
-use Raxos\Terminal\Contract\AttributeInterface;
 
 /**
  * Class Option

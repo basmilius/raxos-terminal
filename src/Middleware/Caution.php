@@ -5,7 +5,7 @@ namespace Raxos\Terminal\Middleware;
 
 use Attribute;
 use Closure;
-use Raxos\Terminal\Contract\{CommandInterface, MiddlewareInterface, TerminalInterface};
+use Raxos\Contract\Terminal\{CommandInterface, MiddlewareInterface, TerminalInterface};
 use Raxos\Terminal\Printer;
 use function Raxos\Foundation\env;
 

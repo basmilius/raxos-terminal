@@ -5,7 +5,7 @@ namespace Raxos\Terminal;
 
 use JetBrains\PhpStorm\ExpectedValues;
 use League\CLImate\CLImate;
-use League\CLImate\TerminalObject\Basic\{Columns};
+use League\CLImate\TerminalObject\Basic\Columns;
 use League\CLImate\TerminalObject\Dynamic\{Animation, Confirm, Input, Padding, Password, Progress, Radio, Spinner};
 use League\CLImate\TerminalObject\Helper\Sleeper;
 use League\CLImate\Util\Reader\ReaderInterface;

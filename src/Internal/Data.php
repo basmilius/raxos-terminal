@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace Raxos\Terminal\Internal;
 
+use Raxos\Contract\Terminal\{AttributeInterface, CommandExceptionInterface, CommandInterface, MiddlewareInterface, TerminalExceptionInterface};
 use Raxos\Foundation\Option\{None, Option as ValueOption};
 use Raxos\Foundation\Util\ReflectionUtil;
 use Raxos\Terminal\Attribute\{Argument, Command, Option};
-use Raxos\Terminal\Contract\{AttributeInterface, CommandInterface, MiddlewareInterface};
-use Raxos\Terminal\Error\{CommandException, TerminalException};
+use Raxos\Terminal\Error\{InvalidCommandException, MissingArgumentException, MissingOptionException, ReflectionErrorException};
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;
@@ -57,7 +57,7 @@ final readonly class Data
      * @param array $options
      *
      * @return void
-     * @throws CommandException
+     * @throws CommandExceptionInterface
      * @author Bas Milius <bas@mili.us>
      * @since 2.0.0
      */
@@ -72,7 +72,7 @@ final readonly class Data
                 $propertyRef->setValue($middleware, $value);
             }
         } catch (ReflectionException $err) {
-            throw CommandException::reflectionFailed($this->class, $err);
+            throw new ReflectionErrorException($this->class, $err);
         }
     }
 
@@ -83,7 +83,7 @@ final readonly class Data
      * @param array<string, string> $options
      *
      * @return CommandInterface
-     * @throws CommandException
+     * @throws CommandExceptionInterface
      * @author Bas Milius <bas@mili.us>
      * @since 2.0.0
      */
@@ -99,7 +99,7 @@ final readonly class Data
      * @param array<string, string> $options
      *
      * @return array
-     * @throws CommandException
+     * @throws CommandExceptionInterface
      * @author Bas Milius <bas@mili.us>
      * @since 1.6.0
      */
@@ -121,7 +121,7 @@ final readonly class Data
             }
 
             if (!$argument->defaultValue->isEmpty) {
-                $args[$argument->name] = $argument->defaultValue->getOrThrow(CommandException::missingArgument($argument->name));
+                $args[$argument->name] = $argument->defaultValue->getOrThrow(new MissingArgumentException($argument->name));
                 continue;
             }
 
@@ -130,7 +130,7 @@ final readonly class Data
                 continue;
             }
 
-            throw CommandException::missingArgument($argument->name);
+            throw new MissingArgumentException($argument->name);
         }
 
         foreach ($this->options as $option) {
@@ -147,7 +147,7 @@ final readonly class Data
             }
 
             if (!$option->defaultValue->isEmpty) {
-                $args[$option->name] = $option->defaultValue->getOrThrow(CommandException::missingOption($option->name));
+                $args[$option->name] = $option->defaultValue->getOrThrow(new MissingOptionException($option->name));
                 continue;
             }
 
@@ -156,7 +156,7 @@ final readonly class Data
                 continue;
             }
 
-            throw CommandException::missingOption($option->name);
+            throw new MissingOptionException($option->name);
         }
 
         return $args;
@@ -168,7 +168,7 @@ final readonly class Data
      * @param class-string<TCommand> $commandClass
      *
      * @return self<TCommand>
-     * @throws TerminalException
+     * @throws TerminalExceptionInterface
      * @author Bas Milius <bas@mili.us>
      * @since 1.6.0
      */
@@ -185,7 +185,7 @@ final readonly class Data
 
             /** @var ReflectionAttribute<Command> $command */
             $command = $classRef->getAttributes(Command::class)[0];
-            $command = $command?->newInstance() ?? throw CommandException::invalid($commandClass, 'The command is missing a Command attribute.');
+            $command = $command?->newInstance() ?? throw new InvalidCommandException($commandClass, 'The command is missing a Command attribute.');
 
             $arguments = [];
             $options = [];
@@ -200,7 +200,7 @@ final readonly class Data
 
                 foreach ($parameters as $parameterRef) {
                     $attributes = $parameterRef->getAttributes(AttributeInterface::class, ReflectionAttribute::IS_INSTANCEOF);
-                    $attribute = $attributes[0] ?? throw CommandException::invalid($commandClass, 'One of the parameters is missing an Argument or Option attribute.');
+                    $attribute = $attributes[0] ?? throw new InvalidCommandException($commandClass, 'One of the parameters is missing an Argument or Option attribute.');
                     $attribute = $attribute->newInstance();
 
                     $name = $attribute->name ?? $parameterRef->name;
@@ -210,7 +210,7 @@ final readonly class Data
                         : ValueOption::none();
 
                     if ($attribute instanceof Argument && !empty($options)) {
-                        throw CommandException::invalid($commandClass, 'An argument cannot be after an option.');
+                        throw new InvalidCommandException($commandClass, 'An argument cannot be after an option.');
                     }
 
                     match (true) {
@@ -226,14 +226,14 @@ final readonly class Data
                             $types,
                             $defaultValue
                         ),
-                        default => throw CommandException::invalid($commandClass)
+                        default => throw new InvalidCommandException($commandClass)
                     };
                 }
             }
 
             return new self($commandClass, $command, $arguments, $middlewares, $options);
         } catch (ReflectionException $err) {
-            throw CommandException::reflectionFailed($commandClass, $err);
+            throw new ReflectionErrorException($commandClass, $err);
         }
     }
 
@@ -243,7 +243,7 @@ final readonly class Data
      * @param string $middlewareClass
      *
      * @return self
-     * @throws CommandException
+     * @throws CommandExceptionInterface
      * @author Bas Milius <bas@mili.us>
      * @since 2.0.0
      */
@@ -292,7 +292,7 @@ final readonly class Data
 
             return new self($middlewareClass, options: $options);
         } catch (ReflectionException $err) {
-            throw CommandException::reflectionFailed($middlewareClass, $err);
+            throw new ReflectionErrorException($middlewareClass, $err);
         }
     }
 

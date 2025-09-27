@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace Raxos\Terminal\Command;
 
 use Composer\InstalledVersions;
-use Raxos\Foundation\Collection\ArrayList;
+use Raxos\Collection\ArrayList;
+use Raxos\Contract\Terminal\{CommandInterface, TerminalInterface};
 use Raxos\Terminal\Attribute\{Argument, Command, Option};
-use Raxos\Terminal\Contract\{CommandInterface, TerminalInterface};
 use Raxos\Terminal\Internal\Data;
 use Raxos\Terminal\Printer;
 use function array_values;

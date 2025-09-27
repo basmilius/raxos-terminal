@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Raxos\Terminal\Attribute;
 
 use Attribute;
-use Raxos\Terminal\Contract\AttributeInterface;
+use Raxos\Contract\Terminal\AttributeInterface;
 
 /**
  * Class Argument
