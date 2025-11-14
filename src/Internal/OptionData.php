@@ -22,6 +22,7 @@ final readonly class OptionData
      * OptionData constructor.
      *
      * @param Option $option
+     * @param string $realName
      * @param string $name
      * @param string[] $type
      * @param OptionInterface $defaultValue
@@ -31,6 +32,7 @@ final readonly class OptionData
      */
     public function __construct(
         public Option $option,
+        public string $realName,
         public string $name,
         public array $type,
         public OptionInterface $defaultValue

@@ -22,6 +22,7 @@ final readonly class ArgumentData
      * ArgumentData constructor.
      *
      * @param Argument $argument
+     * @param string $realName
      * @param string $name
      * @param string[] $type
      * @param OptionInterface $defaultValue
@@ -31,6 +32,7 @@ final readonly class ArgumentData
      */
     public function __construct(
         public Argument $argument,
+        public string $realName,
         public string $name,
         public array $type,
         public OptionInterface $defaultValue

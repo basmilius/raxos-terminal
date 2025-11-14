@@ -5,6 +5,7 @@ namespace Raxos\Terminal\Internal;
 
 use Raxos\Contract\Terminal\{AttributeInterface, CommandExceptionInterface, CommandInterface, MiddlewareInterface, TerminalExceptionInterface};
 use Raxos\Foundation\Option\{None, Option as ValueOption};
+use Raxos\Foundation\Util\Debug;
 use Raxos\Foundation\Util\ReflectionUtil;
 use Raxos\Terminal\Attribute\{Argument, Command, Option};
 use Raxos\Terminal\Error\{InvalidCommandException, MissingArgumentException, MissingOptionException, ReflectionErrorException};
@@ -116,17 +117,17 @@ final readonly class Data
                 }
 
                 // todo(Bas): types.
-                $args[$argument->name] = $arg;
+                $args[$argument->realName] = $arg;
                 continue;
             }
 
             if (!$argument->defaultValue->isEmpty) {
-                $args[$argument->name] = $argument->defaultValue->getOrThrow(new MissingArgumentException($argument->name));
+                $args[$argument->realName] = $argument->defaultValue->getOrThrow(new MissingArgumentException($argument->name));
                 continue;
             }
 
             if (in_array('null', $argument->type, true)) {
-                $args[$argument->name] = null;
+                $args[$argument->realName] = null;
                 continue;
             }
 
@@ -142,17 +143,17 @@ final readonly class Data
                 }
 
                 // todo(Bas): types.
-                $args[$option->name] = $arg;
+                $args[$option->realName] = $arg;
                 continue;
             }
 
             if (!$option->defaultValue->isEmpty) {
-                $args[$option->name] = $option->defaultValue->getOrThrow(new MissingOptionException($option->name));
+                $args[$option->realName] = $option->defaultValue->getOrThrow(new MissingOptionException($option->name));
                 continue;
             }
 
             if (in_array('null', $option->type, true)) {
-                $args[$option->name] = null;
+                $args[$option->realName] = null;
                 continue;
             }
 
@@ -216,12 +217,14 @@ final readonly class Data
                     match (true) {
                         $attribute instanceof Argument => $arguments[] = new ArgumentData(
                             $attribute,
+                            $parameterRef->name,
                             $name,
                             $types,
                             $defaultValue
                         ),
                         $attribute instanceof Option => $options[] = new OptionData(
                             $attribute,
+                            $parameterRef->name,
                             $name,
                             $types,
                             $defaultValue
