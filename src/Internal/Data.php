@@ -5,7 +5,6 @@ namespace Raxos\Terminal\Internal;
 
 use Raxos\Contract\Terminal\{AttributeInterface, CommandExceptionInterface, CommandInterface, MiddlewareInterface, TerminalExceptionInterface};
 use Raxos\Foundation\Option\{None, Option as ValueOption};
-use Raxos\Foundation\Util\Debug;
 use Raxos\Foundation\Util\ReflectionUtil;
 use Raxos\Terminal\Attribute\{Argument, Command, Option};
 use Raxos\Terminal\Error\{InvalidCommandException, MissingArgumentException, MissingOptionException, ReflectionErrorException};
@@ -287,6 +286,7 @@ final readonly class Data
 
                 $options[] = new OptionData(
                     $attribute,
+                    $propertyRef->name,
                     $name,
                     $types,
                     $defaultValue
