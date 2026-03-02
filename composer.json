@@ -38,7 +38,7 @@
         "ext-mbstring": "*",
         "jetbrains/phpstorm-attributes": "^1.2",
         "league/climate": "^3.10",
-        "nunomaduro/collision": "^8.8",
+        "nunomaduro/collision": "^8.9",
         "raxos/foundation": "*"
     }
 }
