@@ -111,11 +111,13 @@ final readonly class Data
             $arg = $arguments[$index] ?? null;
 
             if ($arg !== null) {
-                if ($argument->type[0] === 'int') {
-                    $arg = (int)$arg;
-                }
+                $arg = match ($argument->type[0]) {
+                    'int' => (int)$arg,
+                    'float' => (float)$arg,
+                    'bool' => $arg === 'true' || $arg === '1',
+                    default => $arg
+                };
 
-                // todo(Bas): types.
                 $args[$argument->realName] = $arg;
                 continue;
             }
@@ -137,11 +139,13 @@ final readonly class Data
             $arg = $options[$option->name] ?? null;
 
             if ($arg !== null) {
-                if ($option->type[0] === 'int') {
-                    $arg = (int)$arg;
-                }
+                $arg = match ($option->type[0]) {
+                    'int' => (int)$arg,
+                    'float' => (float)$arg,
+                    'bool' => $arg === true || $arg === 'true' || $arg === '1',
+                    default => $arg
+                };
 
-                // todo(Bas): types.
                 $args[$option->realName] = $arg;
                 continue;
             }
@@ -233,7 +237,7 @@ final readonly class Data
                 }
             }
 
-            return new self($commandClass, $command, $arguments, $middlewares, $options);
+            return $cache[$commandClass] = new self($commandClass, $command, $arguments, $middlewares, $options);
         } catch (ReflectionException $err) {
             throw new ReflectionErrorException($commandClass, $err);
         }
@@ -293,7 +297,7 @@ final readonly class Data
                 );
             }
 
-            return new self($middlewareClass, options: $options);
+            return $cache[$middlewareClass] = new self($middlewareClass, options: $options);
         } catch (ReflectionException $err) {
             throw new ReflectionErrorException($middlewareClass, $err);
         }

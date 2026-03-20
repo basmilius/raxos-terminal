@@ -124,11 +124,11 @@ final class TextCursor
      *
      * @param int $length
      *
-     * @return string|null
+     * @return string
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
-    public function peek(int $length = 1): ?string
+    public function peek(int $length = 1): string
     {
         return mb_substr($this->text, $this->position, $length);
     }

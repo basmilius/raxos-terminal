@@ -20,20 +20,20 @@ final class InvalidCommandException extends Exception implements CommandExceptio
      * InvalidCommandException constructor.
      *
      * @param string $commandClass
-     * @param string|null $msg
+     * @param string|null $reason
      *
      * @author Bas Milius <bas@mili.us>
      * @since 2.0.0
      */
     public function __construct(
         public string $commandClass,
-        public ?string $msg = null
+        public ?string $reason = null
     )
     {
         parent::__construct(
             'terminal_command_invalid',
-            $this->msg !== null
-                ? "Command {$this->commandClass} is invalid: {$this->msg}"
+            $this->reason !== null
+                ? "Command {$this->commandClass} is invalid: {$this->reason}"
                 : "Command {$this->commandClass} is invalid."
         );
     }

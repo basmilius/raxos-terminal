@@ -29,7 +29,7 @@ final class CommandNotFoundException extends Exception implements CommandExcepti
     )
     {
         parent::__construct(
-            'terminal_command_duplicate',
+            'terminal_command_not_found',
             "Command {$this->command} cannot be found."
         );
     }

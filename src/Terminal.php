@@ -66,7 +66,7 @@ class Terminal implements TerminalInterface
             $this->printer->incorrect($err->getMessage());
 
             try {
-                $help = new HelpCommand($result->command);
+                $help = new HelpCommand($result?->command);
                 $help->execute($this, $this->printer, false);
             } catch (Throwable) {
             }

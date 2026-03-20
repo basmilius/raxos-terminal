@@ -19,7 +19,7 @@ final readonly class ParserResult
      * @param string $raw
      * @param string|null $command
      * @param string[] $arguments
-     * @param array<string, string> $options
+     * @param array<string, string|true> $options
      *
      * @author Bas Milius <bas@mili.us>
      * @since 2.0.0

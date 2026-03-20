@@ -22,7 +22,7 @@ final class Parser
 {
 
     private const string RE_ARG_KEY = '/^[\w-]+/';
-    private const string RE_ARG_VALUE = '/^([\w@:\-.\\\]+)/';
+    private const string RE_ARG_VALUE = '/^([\w@:\-.\\\\/]+)/';
     private const string RE_COMMAND = '/^[\w:-]+/';
 
     /**
