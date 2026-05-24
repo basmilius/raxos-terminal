@@ -5,6 +5,7 @@ namespace Raxos\Terminal;
 
 use Closure;
 use InvalidArgumentException;
+use Raxos\Contract\Container\ContainerInterface;
 use Raxos\Contract\Terminal\{CommandExceptionInterface, CommandInterface, MiddlewareInterface, TerminalExceptionInterface, TerminalInterface};
 use Raxos\Terminal\Collision\ErrorReporter;
 use Raxos\Terminal\Command\HelpCommand;
@@ -36,11 +37,15 @@ class Terminal implements TerminalInterface
     /**
      * Terminal constructor.
      *
+     * @param Printer $printer
+     * @param ContainerInterface|null $container
+     *
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */
     public function __construct(
-        public readonly Printer $printer = new Printer()
+        public readonly Printer $printer = new Printer(),
+        public readonly ?ContainerInterface $container = null
     ) {}
 
     /**
@@ -124,7 +129,7 @@ class Terminal implements TerminalInterface
     private function run(string $commandClass, ?ParserResult $result = null): void
     {
         $data = Data::parseCommand($commandClass);
-        $command = $data->instantiate($result?->arguments ?? [], $result?->options ?? []);
+        $command = $data->instantiate($result?->arguments ?? [], $result?->options ?? [], $this->container);
 
         $this->closure($data->middlewares, $command, $result)();
     }

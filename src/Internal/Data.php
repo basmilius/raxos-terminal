@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Raxos\Terminal\Internal;
 
+use Raxos\Contract\Container\ContainerExceptionInterface;
+use Raxos\Contract\Container\ContainerInterface;
 use Raxos\Contract\Terminal\{AttributeInterface, CommandExceptionInterface, CommandInterface, MiddlewareInterface, TerminalExceptionInterface};
 use Raxos\Foundation\Option\{None, Option as ValueOption};
 use Raxos\Foundation\Util\ReflectionUtil;
@@ -37,6 +39,7 @@ final readonly class Data
      * @param ArgumentData[] $arguments
      * @param MiddlewareInterface[] $middlewares
      * @param OptionData[] $options
+     * @param DependencyData[] $dependencies
      *
      * @author Bas Milius <bas@mili.us>
      * @since 1.6.0
@@ -46,7 +49,8 @@ final readonly class Data
         public ?Command $command = null,
         public array $arguments = [],
         public array $middlewares = [],
-        public array $options = []
+        public array $options = [],
+        public array $dependencies = []
     ) {}
 
     /**
@@ -81,15 +85,29 @@ final readonly class Data
      *
      * @param string[] $arguments
      * @param array<string, string> $options
+     * @param ContainerInterface|null $container
      *
      * @return CommandInterface
      * @throws CommandExceptionInterface
+     * @throws ContainerExceptionInterface
      * @author Bas Milius <bas@mili.us>
      * @since 2.0.0
      */
-    public function instantiate(array $arguments, array $options): CommandInterface
+    public function instantiate(array $arguments, array $options, ?ContainerInterface $container = null): CommandInterface
     {
-        return new $this->class(...$this->getNamedArgumentsAndOptions($arguments, $options));
+        $args = $this->getNamedArgumentsAndOptions($arguments, $options);
+
+        if ($this->dependencies !== []) {
+            if ($container === null) {
+                throw new InvalidCommandException($this->class, 'A container is required to instantiate a command with dependencies.');
+            }
+
+            foreach ($this->dependencies as $dependency) {
+                $args[$dependency->name] = $container->get($dependency->type);
+            }
+        }
+
+        return new $this->class(...$args);
     }
 
     /**
@@ -193,6 +211,7 @@ final readonly class Data
 
             $arguments = [];
             $options = [];
+            $dependencies = [];
 
             $middlewares = $classRef->getAttributes(MiddlewareInterface::class, ReflectionAttribute::IS_INSTANCEOF);
             $middlewares = array_map(static fn(ReflectionAttribute $attribute) => $attribute->newInstance(), $middlewares);
@@ -204,7 +223,35 @@ final readonly class Data
 
                 foreach ($parameters as $parameterRef) {
                     $attributes = $parameterRef->getAttributes(AttributeInterface::class, ReflectionAttribute::IS_INSTANCEOF);
-                    $attribute = $attributes[0] ?? throw new InvalidCommandException($commandClass, 'One of the parameters is missing an Argument or Option attribute.');
+                    $attribute = $attributes[0] ?? null;
+
+                    if ($attribute === null) {
+                        $parameterType = $parameterRef->getType();
+
+                        if ($parameterType === null) {
+                            throw new InvalidCommandException($commandClass, "Parameter '{$parameterRef->name}' has no type and no Argument or Option attribute.");
+                        }
+
+                        $types = ReflectionUtil::getTypes($parameterType);
+                        $resolvable = null;
+
+                        foreach ($types ?? [] as $candidate) {
+                            if ($candidate === 'null' || in_array($candidate, ['int', 'float', 'string', 'bool', 'array', 'mixed', 'iterable', 'object', 'callable', 'self', 'static', 'parent', 'void', 'never'], true)) {
+                                continue;
+                            }
+
+                            $resolvable = $candidate;
+                            break;
+                        }
+
+                        if ($resolvable === null) {
+                            throw new InvalidCommandException($commandClass, "Parameter '{$parameterRef->name}' must be typed with a class or interface to be resolved via the container.");
+                        }
+
+                        $dependencies[] = new DependencyData($parameterRef->name, $resolvable);
+                        continue;
+                    }
+
                     $attribute = $attribute->newInstance();
 
                     $name = $attribute->name ?? $parameterRef->name;
@@ -237,7 +284,7 @@ final readonly class Data
                 }
             }
 
-            return $cache[$commandClass] = new self($commandClass, $command, $arguments, $middlewares, $options);
+            return $cache[$commandClass] = new self($commandClass, $command, $arguments, $middlewares, $options, $dependencies);
         } catch (ReflectionException $err) {
             throw new ReflectionErrorException($commandClass, $err);
         }
