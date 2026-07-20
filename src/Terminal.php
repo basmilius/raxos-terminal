@@ -5,6 +5,7 @@ namespace Raxos\Terminal;
 
 use Closure;
 use InvalidArgumentException;
+use Raxos\Contract\Container\ContainerExceptionInterface;
 use Raxos\Contract\Container\ContainerInterface;
 use Raxos\Contract\Terminal\{CommandExceptionInterface, CommandInterface, MiddlewareInterface, TerminalExceptionInterface, TerminalInterface};
 use Raxos\Terminal\Collision\ErrorReporter;
@@ -122,6 +123,7 @@ class Terminal implements TerminalInterface
      * @param ParserResult|null $result
      *
      * @return void
+     * @throws ContainerExceptionInterface
      * @throws TerminalExceptionInterface
      * @author Bas Milius <bas@mili.us>
      * @since 2.0.0
