@@ -32,7 +32,7 @@ final class Parser
      *
      * @return ParserResult|null
      * @author Bas Milius <bas@mili.us>
-     * @since 1.0.1
+     * @since 3.2.0
      */
     public static function parse(string $rawCommand): ?ParserResult
     {
@@ -58,7 +58,7 @@ final class Parser
                 // --key value
 
                 $cursor->advanceBy(2);
-                $key = $cursor->match(self::RE_ARG_KEY);
+                $key = $cursor->match(self::RE_ARG_KEY) ?? throw new RuntimeException('An option requires a name.');
                 $value = null;
 
                 if ($cursor->peek() === '=') {
@@ -79,7 +79,7 @@ final class Parser
 
                     if ($cursor->peek() === '"' || $cursor->peek() === "'") {
                         $value = $cursor->quotedString();
-                    } elseif (($str = $cursor->match(self::RE_ARG_VALUE)) !== null) {
+                    } elseif ($cursor->peek() !== '-' && ($str = $cursor->match(self::RE_ARG_VALUE)) !== null) {
                         $value = $str;
                     } else {
                         $value = true;
@@ -95,7 +95,7 @@ final class Parser
                 // -key value
 
                 $cursor->advance();
-                $key = $cursor->match(self::RE_ARG_KEY);
+                $key = $cursor->match(self::RE_ARG_KEY) ?? throw new RuntimeException('An option requires a name.');
                 $value = null;
 
                 if ($cursor->peek() === '=') {
@@ -116,7 +116,7 @@ final class Parser
 
                     if ($cursor->peek() === '"' || $cursor->peek() === "'") {
                         $value = $cursor->quotedString();
-                    } elseif (($str = $cursor->match(self::RE_ARG_VALUE)) !== null) {
+                    } elseif ($cursor->peek() !== '-' && ($str = $cursor->match(self::RE_ARG_VALUE)) !== null) {
                         $value = $str;
                     } else {
                         $value = true;
@@ -132,13 +132,13 @@ final class Parser
 
                 $arguments[] = $cursor->quotedString();
 
-            } elseif ($command === null && $word = $cursor->match(self::RE_COMMAND)) {
+            } elseif ($command === null && ($word = $cursor->match(self::RE_COMMAND)) !== null) {
 
                 // string (Name of our command)
 
                 $command = $word;
 
-            } elseif ($word = $cursor->match(self::RE_ARG_VALUE)) {
+            } elseif (($word = $cursor->match(self::RE_ARG_VALUE)) !== null) {
 
                 // string (As an argument)
 
