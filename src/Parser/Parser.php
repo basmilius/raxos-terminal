@@ -4,12 +4,12 @@ declare(strict_types=1);
 namespace Raxos\Terminal\Parser;
 
 use RuntimeException;
-use function array_map;
 use function array_shift;
+use function count;
 use function implode;
+use function preg_match;
 use function sprintf;
-use function str_contains;
-use function str_replace;
+use function str_starts_with;
 
 /**
  * Class Parser
@@ -168,12 +168,40 @@ final class Parser
      */
     public static function parseFromArgs(): ?ParserResult
     {
-        $arguments = $GLOBALS['argv'];
-        array_shift($arguments);
-        $arguments = array_map(static fn(string $arg) => str_contains($arg, ' ') ? '"' . str_replace('"', '\"', $arg) . '"' : $arg, $arguments);
-        $command = implode(' ', $arguments);
+        $tokens = $GLOBALS['argv'];
+        array_shift($tokens);
 
-        return self::parse($command);
+        if ($tokens === []) {
+            return null;
+        }
+
+        $command = array_shift($tokens);
+        $arguments = [];
+        $options = [];
+        $positional = false;
+
+        for ($i = 0; $i < count($tokens); $i++) {
+            $token = $tokens[$i];
+
+            if (!$positional && $token === '--') {
+                $positional = true;
+                continue;
+            }
+
+            if (!$positional && preg_match('/^--?([\w-]+)(?:=(.*))?$/sD', $token, $matches)) {
+                $value = $matches[2] ?? true;
+
+                if (!isset($matches[2]) && isset($tokens[$i + 1]) && !str_starts_with($tokens[$i + 1], '-')) {
+                    $value = $tokens[++$i];
+                }
+
+                $options[$matches[1]] = $value;
+            } else {
+                $arguments[] = $token;
+            }
+        }
+
+        return new ParserResult(implode(' ', [$command, ...$tokens]), $command, $arguments, $options);
     }
 
 }

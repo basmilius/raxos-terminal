@@ -1,7 +1,7 @@
 {
     "name": "raxos/terminal",
     "description": "Base classes for custom terminals with command support.",
-    "license": "mit",
+    "license": "MIT",
     "minimum-stability": "dev",
     "prefer-stable": true,
     "type": "library",
@@ -19,6 +19,9 @@
     "config": {
         "platform": {
             "php": "8.5"
+        },
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
         }
     },
     "repositories": [
@@ -39,6 +42,21 @@
         "jetbrains/phpstorm-attributes": "^1.2",
         "league/climate": "^3.10",
         "nunomaduro/collision": "^8.9",
+        "php": ">=8.5",
+        "raxos/collection": "*",
+        "raxos/contract": "*",
+        "raxos/error": "*",
         "raxos/foundation": "*"
+    },
+    "require-dev": {
+        "pestphp/pest": "^5.0"
+    },
+    "autoload-dev": {
+        "classmap": [
+            "tests/Fixtures/"
+        ]
+    },
+    "scripts": {
+        "test": "pest --compact"
     }
 }

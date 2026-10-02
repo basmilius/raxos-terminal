@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace Raxos\Terminal\Parser;
 
+use RuntimeException;
 use function mb_strlen;
 use function mb_substr;
 use function preg_match;
-use function stripslashes;
 
 /**
  * Class TextCursor
@@ -142,13 +142,27 @@ final class TextCursor
      */
     public function quotedString(): ?string
     {
-        $str = $this->match("/^(?:\"(?:\"|[^\"])+\"|'(?:'|[^'])+')/i");
+        $quote = $this->peek();
+        $this->advance();
+        $buffer = '';
 
-        if ($str !== null) {
-            return stripslashes(mb_substr($str, 1, -1));
+        while (!$this->atEnd()) {
+            $character = $this->peek();
+            $this->advance();
+
+            if ($character === $quote) {
+                return $buffer;
+            }
+
+            if ($character === '\\' && ($this->peek() === $quote || $this->peek() === '\\')) {
+                $character = $this->peek();
+                $this->advance();
+            }
+
+            $buffer .= $character;
         }
 
-        return null;
+        throw new RuntimeException('Unterminated quoted argument.');
     }
 
     /**
