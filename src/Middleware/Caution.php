@@ -34,6 +34,7 @@ final readonly class Caution implements MiddlewareInterface
 
     /**
      * {@inheritdoc}
+     *
      * @author Bas Milius <bas@mili.us>
      * @since 2.0.0
      */

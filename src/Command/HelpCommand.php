@@ -50,6 +50,7 @@ final readonly class HelpCommand implements CommandInterface
 
     /**
      * {@inheritdoc}
+     *
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.1
      */

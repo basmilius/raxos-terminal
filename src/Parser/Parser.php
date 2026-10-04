@@ -218,4 +218,5 @@ final class Parser
 
         return new ParserResult(implode(' ', [$command, ...$tokens]), $command, $arguments, $options);
     }
+
 }

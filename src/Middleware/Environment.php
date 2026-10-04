@@ -34,6 +34,7 @@ final readonly class Environment implements MiddlewareInterface
 
     /**
      * {@inheritdoc}
+     *
      * @author Bas Milius <bas@mili.us>
      * @since 2.2.0
      */

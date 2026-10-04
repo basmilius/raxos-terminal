@@ -9,34 +9,34 @@ use League\CLImate\CLImate;
 use League\CLImate\TerminalObject\Dynamic\Confirm as ClimateConfirm;
 use League\CLImate\Util\Output;
 use League\CLImate\Util\Writer\Buffer;
-use Raxos\Contract\Terminal\CommandInterface;
-use Raxos\Contract\Terminal\MiddlewareInterface;
-use Raxos\Contract\Terminal\TerminalInterface;
-use Raxos\Terminal\Attribute\Argument;
-use Raxos\Terminal\Attribute\Command;
-use Raxos\Terminal\Attribute\Option;
-use Raxos\Terminal\Printer;
-use Raxos\Terminal\Terminal;
+use Raxos\Contract\Terminal\{CommandInterface, MiddlewareInterface, TerminalInterface};
+use Raxos\Terminal\{Printer, Terminal};
+use Raxos\Terminal\Attribute\{Argument, Command, Option};
+use ReflectionProperty;
 use RuntimeException;
 
 final class ExitSignal extends RuntimeException {}
 
 final class UnitTerminal extends Terminal
 {
+
     public function exit(int $code = 0): never
     {
         throw new ExitSignal('exit', $code);
     }
+
 }
 
 final class Confirmation extends ClimateConfirm
 {
+
     public static bool $answer = true;
 
     public function confirmed(): bool
     {
         return self::$answer;
     }
+
 }
 
 final class UnitService {}
@@ -44,6 +44,7 @@ final class UnitService {}
 #[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
 final class TraceMiddleware implements MiddlewareInterface
 {
+
     #[Option(name: 'trace', default: 0)]
     public int $trace;
 
@@ -55,6 +56,7 @@ final class TraceMiddleware implements MiddlewareInterface
         $next();
         UnitCommand::$events[] = [$this->name, $this->trace, 'after'];
     }
+
 }
 
 #[Command('unit', 'A test command.', 'unit [count] --enabled=true')]
@@ -62,6 +64,7 @@ final class TraceMiddleware implements MiddlewareInterface
 #[TraceMiddleware('inner')]
 final class UnitCommand implements CommandInterface
 {
+
     public static array $events = [];
 
     public static ?self $last = null;
@@ -82,43 +85,53 @@ final class UnitCommand implements CommandInterface
         self::$last = $this;
         self::$events[] = ['command', $this->number];
     }
+
 }
 
 #[Command('simple')]
 final class SimpleCommand implements CommandInterface
 {
+
     public function execute(TerminalInterface $terminal, Printer $printer): void
     {
         UnitCommand::$events[] = ['simple'];
     }
+
 }
 
 #[Command('dependency')]
 final class DependencyCommand implements CommandInterface
 {
+
     public function __construct(public UnitService $service) {}
 
     public function execute(TerminalInterface $terminal, Printer $printer): void {}
+
 }
 
 #[Command('bad-order')]
 final class BadOrderCommand implements CommandInterface
 {
+
     public function __construct(#[Option] bool $option, #[Argument] string $argument) {}
 
     public function execute(TerminalInterface $terminal, Printer $printer): void {}
+
 }
 
 #[Command('bad-scalar')]
 final class BadScalarCommand implements CommandInterface
 {
+
     public function __construct(string $unannotated) {}
 
     public function execute(TerminalInterface $terminal, Printer $printer): void {}
+
 }
 
 final class RequiredOptions implements MiddlewareInterface
 {
+
     #[Option]
     public bool $required;
 
@@ -134,6 +147,7 @@ final class RequiredOptions implements MiddlewareInterface
     public string $ignored = 'ignored';
 
     public function handle(CommandInterface $command, TerminalInterface $terminal, Printer $printer, Closure $next): void {}
+
 }
 
 function unitPrinter(): array
@@ -145,7 +159,7 @@ function unitPrinter(): array
     $printer = new Printer();
     $printer->setOutput($output);
     $printer->forceAnsiOff();
-    new \ReflectionProperty(CLImate::class, 'router')->getValue($printer)->addExtension('confirm', Confirmation::class);
+    new ReflectionProperty(CLImate::class, 'router')->getValue($printer)->addExtension('confirm', Confirmation::class);
 
     return [$printer, $buffer];
 }
@@ -165,17 +179,20 @@ function withUnitArgs(array $args, callable $run): void
 #[Command('explicit-exit')]
 final class ExplicitExitCommand implements CommandInterface
 {
+
     public function __construct(#[Argument] public int $status) {}
 
     public function execute(TerminalInterface $terminal, Printer $printer): void
     {
         $terminal->exit($this->status);
     }
+
 }
 
 #[Command('nested-run')]
 final class NestedRunCommand implements CommandInterface
 {
+
     public static ?int $innerStatus = null;
 
     public function execute(TerminalInterface $terminal, Printer $printer): void
@@ -183,4 +200,5 @@ final class NestedRunCommand implements CommandInterface
         self::$innerStatus = $terminal->run(['tool', 'explicit-exit', '7']);
         $terminal->exit(self::$innerStatus + 1);
     }
+
 }

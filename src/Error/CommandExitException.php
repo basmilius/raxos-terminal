@@ -17,6 +17,7 @@ use Raxos\Error\Exception;
  */
 final class CommandExitException extends Exception
 {
+
     /**
      * Preserves the requested exit status for the programmable command entrypoint.
      *
@@ -29,4 +30,5 @@ final class CommandExitException extends Exception
     {
         parent::__construct('terminal_command_exit', 'Command execution stopped.');
     }
+
 }

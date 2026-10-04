@@ -34,6 +34,7 @@ final class Checkboxes extends BaseCheckboxes
 
     /**
      * {@inheritdoc}
+     *
      * @return array
      * @author Bas Milius <bas@mili.us>
      * @since 1.6.0
@@ -45,6 +46,7 @@ final class Checkboxes extends BaseCheckboxes
 
     /**
      * {@inheritdoc}
+     *
      * @author Bas Milius <bas@mili.us>
      * @since 1.6.0
      */

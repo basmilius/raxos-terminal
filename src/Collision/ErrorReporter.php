@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Raxos\Terminal\Collision;
 
-use NunoMaduro\Collision;
+use NunoMaduro\Collision\Provider;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
@@ -27,7 +27,7 @@ final class ErrorReporter
      */
     public static function exception(Throwable $err): void
     {
-        $provider = new Collision\Provider();
+        $provider = new Provider();
         $provider->register();
 
         $handler = $provider->getHandler();

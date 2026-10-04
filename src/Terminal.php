@@ -35,6 +35,7 @@ use function is_subclass_of;
  */
 class Terminal implements TerminalInterface
 {
+
     /**
      * Keeps exit requests inside nested programmable runs from terminating the process.
      *
@@ -46,6 +47,7 @@ class Terminal implements TerminalInterface
 
     /**
      * {@inheritdoc}
+     *
      * @author Bas Milius <bas@mili.us>
      * @since 1.4.0
      */
@@ -69,6 +71,7 @@ class Terminal implements TerminalInterface
 
     /**
      * {@inheritdoc}
+     *
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.17
      */
@@ -133,6 +136,7 @@ class Terminal implements TerminalInterface
 
     /**
      * {@inheritdoc}
+     *
      * @author Bas Milius <bas@mili.us>
      * @since 1.6.0
      */
@@ -147,6 +151,7 @@ class Terminal implements TerminalInterface
 
     /**
      * {@inheritdoc}
+     *
      * @author Bas Milius <bas@mili.us>
      * @since 1.6.0
      */
@@ -220,4 +225,5 @@ class Terminal implements TerminalInterface
 
         return fn() => $middleware->handle($command, $this, $this->printer, $next);
     }
+
 }

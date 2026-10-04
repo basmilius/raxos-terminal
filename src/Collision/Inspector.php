@@ -17,6 +17,7 @@ final class Inspector extends BaseInspector
 
     /**
      * {@inheritdoc}
+     *
      * @author Bas Milius <bas@mili.us>
      * @since 1.0.2
      */

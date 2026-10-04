@@ -17,6 +17,7 @@ use function preg_match;
  */
 final class TextCursor
 {
+
     /**
      * Bounds cursor movement using the input length captured at construction.
      *
@@ -190,4 +191,5 @@ final class TextCursor
     {
         return mb_substr($this->text, $this->position);
     }
+
 }

@@ -137,6 +137,7 @@ final class Printer extends CLImate
 
     /**
      * {@inheritdoc}
+     *
      * @author Bas Milius <bas@mili.us>
      * @since 1.6.0
      */
