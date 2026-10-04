@@ -20,12 +20,12 @@ it('caches parsed command metadata and resolves aliases, defaults and middleware
 });
 
 it('rejects missing arguments before constructing a command', function (): void {
-    expect(fn () => Data::parseCommand(UnitCommand::class)->instantiate([], []))->toThrow(MissingArgumentException::class, 'count');
+    expect(fn() => Data::parseCommand(UnitCommand::class)->instantiate([], []))->toThrow(MissingArgumentException::class, 'count');
 });
 
 it('requires a container only for commands with dependencies', function (): void {
     $data = Data::parseCommand(DependencyCommand::class);
-    expect(fn () => $data->instantiate([], []))->toThrow(InvalidCommandException::class, 'container');
+    expect(fn() => $data->instantiate([], []))->toThrow(InvalidCommandException::class, 'container');
     $service = new UnitService();
     $container = test()->createMock(ContainerInterface::class);
     $container->expects(test()->once())->method('get')->with(UnitService::class)->willReturn($service);
@@ -34,13 +34,13 @@ it('requires a container only for commands with dependencies', function (): void
 });
 
 it('rejects invalid command metadata and missing classes', function (string $class, string $error): void {
-    expect(fn () => Data::parseCommand($class))->toThrow($error);
+    expect(fn() => Data::parseCommand($class))->toThrow($error);
 })->with([[BadOrderCommand::class, InvalidCommandException::class], [BadScalarCommand::class, InvalidCommandException::class], [RequiredOptions::class, InvalidCommandException::class], ['MissingUnitCommand', ReflectionErrorException::class]]);
 
 it('injects options with attribute defaults taking precedence over property defaults', function (): void {
     $data = Data::parseMiddleware(RequiredOptions::class);
     expect(Data::parseMiddleware(RequiredOptions::class))->toBe($data)->and(count($data->options))->toBe(4);
-    expect(fn () => $data->inject(new RequiredOptions()))->toThrow(MissingOptionException::class, 'required');
+    expect(fn() => $data->inject(new RequiredOptions()))->toThrow(MissingOptionException::class, 'required');
     $middleware = new RequiredOptions();
     $data->inject($middleware, options: ['required' => 'false']);
     expect($middleware->required)->toBeFalse()->and($middleware->nullable)->toBeNull()
@@ -50,5 +50,5 @@ it('injects options with attribute defaults taking precedence over property defa
 });
 
 it('wraps missing middleware classes with their reflection cause', function (): void {
-    expect(fn () => Data::parseMiddleware('MissingUnitMiddleware'))->toThrow(ReflectionErrorException::class);
+    expect(fn() => Data::parseMiddleware('MissingUnitMiddleware'))->toThrow(ReflectionErrorException::class);
 });

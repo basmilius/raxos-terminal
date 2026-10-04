@@ -21,6 +21,7 @@ final class CommandExitException extends Exception
      * Preserves the requested exit status for the programmable command entrypoint.
      *
      * @param int $status
+     *
      * @author Bas Milius <bas@mili.us>
      * @since 3.3.0
      */

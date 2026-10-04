@@ -19,9 +19,7 @@ use Raxos\Terminal\Printer;
 use Raxos\Terminal\Terminal;
 use RuntimeException;
 
-final class ExitSignal extends RuntimeException
-{
-}
+final class ExitSignal extends RuntimeException {}
 
 final class UnitTerminal extends Terminal
 {
@@ -41,9 +39,7 @@ final class Confirmation extends ClimateConfirm
     }
 }
 
-final class UnitService
-{
-}
+final class UnitService {}
 
 #[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
 final class TraceMiddleware implements MiddlewareInterface
@@ -51,9 +47,7 @@ final class TraceMiddleware implements MiddlewareInterface
     #[Option(name: 'trace', default: 0)]
     public int $trace;
 
-    public function __construct(public string $name = 'outer')
-    {
-    }
+    public function __construct(public string $name = 'outer') {}
 
     public function handle(CommandInterface $command, TerminalInterface $terminal, Printer $printer, Closure $next): void
     {
@@ -81,8 +75,7 @@ final class UnitCommand implements CommandInterface
         public bool $active = false,
         #[Option]
         public float $weight = 1.5,
-    ) {
-    }
+    ) {}
 
     public function execute(TerminalInterface $terminal, Printer $printer): void
     {
@@ -103,37 +96,25 @@ final class SimpleCommand implements CommandInterface
 #[Command('dependency')]
 final class DependencyCommand implements CommandInterface
 {
-    public function __construct(public UnitService $service)
-    {
-    }
+    public function __construct(public UnitService $service) {}
 
-    public function execute(TerminalInterface $terminal, Printer $printer): void
-    {
-    }
+    public function execute(TerminalInterface $terminal, Printer $printer): void {}
 }
 
 #[Command('bad-order')]
 final class BadOrderCommand implements CommandInterface
 {
-    public function __construct(#[Option] bool $option, #[Argument] string $argument)
-    {
-    }
+    public function __construct(#[Option] bool $option, #[Argument] string $argument) {}
 
-    public function execute(TerminalInterface $terminal, Printer $printer): void
-    {
-    }
+    public function execute(TerminalInterface $terminal, Printer $printer): void {}
 }
 
 #[Command('bad-scalar')]
 final class BadScalarCommand implements CommandInterface
 {
-    public function __construct(string $unannotated)
-    {
-    }
+    public function __construct(string $unannotated) {}
 
-    public function execute(TerminalInterface $terminal, Printer $printer): void
-    {
-    }
+    public function execute(TerminalInterface $terminal, Printer $printer): void {}
 }
 
 final class RequiredOptions implements MiddlewareInterface
@@ -152,9 +133,7 @@ final class RequiredOptions implements MiddlewareInterface
 
     public string $ignored = 'ignored';
 
-    public function handle(CommandInterface $command, TerminalInterface $terminal, Printer $printer, Closure $next): void
-    {
-    }
+    public function handle(CommandInterface $command, TerminalInterface $terminal, Printer $printer, Closure $next): void {}
 }
 
 function unitPrinter(): array
@@ -186,9 +165,7 @@ function withUnitArgs(array $args, callable $run): void
 #[Command('explicit-exit')]
 final class ExplicitExitCommand implements CommandInterface
 {
-    public function __construct(#[Argument] public int $status)
-    {
-    }
+    public function __construct(#[Argument] public int $status) {}
 
     public function execute(TerminalInterface $terminal, Printer $printer): void
     {

@@ -13,7 +13,7 @@ it('parses empty quoted positional and option values', function (): void {
 });
 
 it('rejects unterminated quotes immediately', function (): void {
-    expect(fn () => Parser::parse('send "unclosed'))->toThrow(RuntimeException::class, 'Unterminated');
+    expect(fn() => Parser::parse('send "unclosed'))->toThrow(RuntimeException::class, 'Unterminated');
 });
 
 it('preserves Unicode and escaped quotes', function (): void {
@@ -65,7 +65,7 @@ it('keeps a zero positional argument and distinguishes successive flags', functi
 });
 
 it('rejects option markers without a name', function (string $raw): void {
-    expect(fn () => Parser::parse($raw))->toThrow(RuntimeException::class);
+    expect(fn() => Parser::parse($raw))->toThrow(RuntimeException::class);
 })->with(['send --', 'send -=value', 'send --=value']);
 
 it('accepts no input and parses both short and long options with separate values', function (): void {

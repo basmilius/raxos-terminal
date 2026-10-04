@@ -65,9 +65,7 @@ class Terminal implements TerminalInterface
     public function __construct(
         public readonly Printer $printer = new Printer(),
         public readonly ?ContainerInterface $container = null
-    )
-    {
-    }
+    ) {}
 
     /**
      * {@inheritdoc}
@@ -87,6 +85,7 @@ class Terminal implements TerminalInterface
      * Runs an argv vector including the executable name without terminating the process.
      *
      * @param list<string> $argv
+     *
      * @return int
      * @author Bas Milius <bas@mili.us>
      * @since 3.3.0

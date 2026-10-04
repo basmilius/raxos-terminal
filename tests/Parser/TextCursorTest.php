@@ -28,5 +28,5 @@ it('unescapes matching quotes and backslashes while keeping other escapes', func
 })->with([['""', ''], ["'héllo'", 'héllo'], ['"a\\"b"', 'a"b'], ["'a\\\\b'", 'a\\b'], ['"a\\nb"', 'a\\nb']]);
 
 it('rejects an unterminated quoted string at the end of input', function (): void {
-    expect(fn () => new TextCursor('"unterminated')->quotedString())->toThrow(RuntimeException::class, 'Unterminated');
+    expect(fn() => new TextCursor('"unterminated')->quotedString())->toThrow(RuntimeException::class, 'Unterminated');
 });

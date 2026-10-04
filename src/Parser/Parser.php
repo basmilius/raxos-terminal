@@ -176,6 +176,7 @@ final class Parser
      * Parses an argv vector including the executable name.
      *
      * @param list<string> $tokens
+     *
      * @return ParserResult|null
      * @author Bas Milius <bas@mili.us>
      * @since 3.3.0
