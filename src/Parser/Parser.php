@@ -32,7 +32,7 @@ final class Parser
      *
      * @return ParserResult|null
      * @author Bas Milius <bas@mili.us>
-     * @since 3.2.0
+     * @since 1.0.1
      */
     public static function parse(string $rawCommand): ?ParserResult
     {
@@ -48,6 +48,7 @@ final class Parser
         do {
             if ($cursor->isSpace()) {
                 $cursor->advance();
+
                 continue;
             }
 
@@ -168,7 +169,19 @@ final class Parser
      */
     public static function parseFromArgs(): ?ParserResult
     {
-        $tokens = $GLOBALS['argv'];
+        return self::parseArgv($GLOBALS['argv']);
+    }
+
+    /**
+     * Parses an argv vector including the executable name.
+     *
+     * @param list<string> $tokens
+     * @return ParserResult|null
+     * @author Bas Milius <bas@mili.us>
+     * @since 3.3.0
+     */
+    public static function parseArgv(array $tokens): ?ParserResult
+    {
         array_shift($tokens);
 
         if ($tokens === []) {
@@ -185,6 +198,7 @@ final class Parser
 
             if (!$positional && $token === '--') {
                 $positional = true;
+
                 continue;
             }
 
@@ -203,5 +217,4 @@ final class Parser
 
         return new ParserResult(implode(' ', [$command, ...$tokens]), $command, $arguments, $options);
     }
-
 }

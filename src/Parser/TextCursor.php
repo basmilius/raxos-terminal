@@ -17,8 +17,22 @@ use function preg_match;
  */
 final class TextCursor
 {
-
+    /**
+     * Bounds cursor movement using the input length captured at construction.
+     *
+     * @var int
+     * @author Bas Milius <bas@mili.us>
+     * @since 1.0.1
+     */
     public readonly int $maxLength;
+
+    /**
+     * Tracks the current position without rescanning earlier input.
+     *
+     * @var int
+     * @author Bas Milius <bas@mili.us>
+     * @since 1.0.1
+     */
     public private(set) int $position = 0;
 
     /**
@@ -176,5 +190,4 @@ final class TextCursor
     {
         return mb_substr($this->text, $this->position);
     }
-
 }

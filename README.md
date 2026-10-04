@@ -20,7 +20,7 @@ Build command-line applications with command attributes, typed input and console
 Requires PHP 8.5 or later. Enable the `mbstring` PHP extension. Composer checks the remaining package and extension dependencies declared in [composer.json](composer.json).
 
 ```sh
-composer require "raxos/terminal:^3.2"
+composer require "raxos/terminal:^3.3"
 ```
 
 ## Usage
@@ -79,3 +79,5 @@ See [Testing Raxos](https://github.com/basmilius/raxos/blob/main/TESTING.md) for
 ## License
 
 [MIT](LICENSE). Copyright (c) 2017 - present Bas Milius.
+
+See [running commands programmatically](https://raxos.dev/terminal/programmatic-runs) for the optional APIs and their lifetime or transport guarantees.

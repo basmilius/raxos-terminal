@@ -43,10 +43,10 @@
         "league/climate": "^3.10",
         "nunomaduro/collision": "^8.9",
         "php": ">=8.5",
-        "raxos/collection": "*",
-        "raxos/contract": "*",
-        "raxos/error": "*",
-        "raxos/foundation": "*"
+        "raxos/collection": "^3.2",
+        "raxos/contract": "^3.2",
+        "raxos/error": "^3.2",
+        "raxos/foundation": "^3.2"
     },
     "require-dev": {
         "pestphp/pest": "^5.0"
@@ -58,5 +58,10 @@
     },
     "scripts": {
         "test": "pest --compact"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "3.3.x-dev"
+        }
     }
 }

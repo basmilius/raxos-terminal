@@ -7,17 +7,27 @@ use Closure;
 use InvalidArgumentException;
 use Raxos\Contract\Container\ContainerExceptionInterface;
 use Raxos\Contract\Container\ContainerInterface;
-use Raxos\Contract\Terminal\{CommandExceptionInterface, CommandInterface, MiddlewareInterface, TerminalExceptionInterface, TerminalInterface};
+use Raxos\Contract\Terminal\CommandExceptionInterface;
+use Raxos\Contract\Terminal\CommandInterface;
+use Raxos\Contract\Terminal\MiddlewareInterface;
+use Raxos\Contract\Terminal\TerminalExceptionInterface;
+use Raxos\Contract\Terminal\TerminalInterface;
 use Raxos\Terminal\Collision\ErrorReporter;
 use Raxos\Terminal\Command\HelpCommand;
-use Raxos\Terminal\Error\{CommandNotFoundException, DuplicateCommandException, InvalidCommandException};
+use Raxos\Terminal\Error\CommandExitException;
+use Raxos\Terminal\Error\CommandNotFoundException;
+use Raxos\Terminal\Error\DuplicateCommandException;
+use Raxos\Terminal\Error\InvalidCommandException;
 use Raxos\Terminal\Internal\Data;
-use Raxos\Terminal\Parser\{Parser, ParserResult};
+use Raxos\Terminal\Parser\Parser;
+use Raxos\Terminal\Parser\ParserResult;
 use Throwable;
 use function is_subclass_of;
 
 /**
  * Class Terminal
+ *
+ * Dispatches CLI commands through shared parsing, injection and middleware lifecycles.
  *
  * @author Bas Milius <bas@mili.us>
  * @package Raxos\Terminal
@@ -25,6 +35,14 @@ use function is_subclass_of;
  */
 class Terminal implements TerminalInterface
 {
+    /**
+     * Keeps exit requests inside nested programmable runs from terminating the process.
+     *
+     * @var int
+     * @author Bas Milius <bas@mili.us>
+     * @since 3.3.0
+     */
+    private int $runDepth = 0;
 
     /**
      * {@inheritdoc}
@@ -47,7 +65,9 @@ class Terminal implements TerminalInterface
     public function __construct(
         public readonly Printer $printer = new Printer(),
         public readonly ?ContainerInterface $container = null
-    ) {}
+    )
+    {
+    }
 
     /**
      * {@inheritdoc}
@@ -56,18 +76,43 @@ class Terminal implements TerminalInterface
      */
     public function execute(): void
     {
-        $result = Parser::parseFromArgs();
+        $code = $this->run($GLOBALS['argv']);
+
+        if ($code !== 0) {
+            $this->exit($code);
+        }
+    }
+
+    /**
+     * Runs an argv vector including the executable name without terminating the process.
+     *
+     * @param list<string> $argv
+     * @return int
+     * @author Bas Milius <bas@mili.us>
+     * @since 3.3.0
+     */
+    public function run(array $argv): int
+    {
+        $result = null;
+        ++$this->runDepth;
 
         try {
+            $result = Parser::parseArgv($argv);
+
             if ($result === null || $result->command === null) {
-                $this->run(HelpCommand::class);
+                $this->runCommand(HelpCommand::class);
             } else {
                 $commandClass = $this->commands[$result->command] ?? throw new CommandNotFoundException($result->command);
-                $this->run($commandClass, $result);
+                $this->runCommand($commandClass, $result);
             }
+
+            return 0;
+        } catch (CommandExitException $exit) {
+            return $exit->status;
         } catch (InvalidArgumentException $err) {
             $this->printer->incorrect($err->getMessage());
-            $this->exit(-1);
+
+            return -1;
         } catch (CommandExceptionInterface $err) {
             $this->printer->incorrect($err->getMessage());
 
@@ -77,10 +122,13 @@ class Terminal implements TerminalInterface
             } catch (Throwable) {
             }
 
-            $this->exit(-2);
+            return -2;
         } catch (Throwable $err) {
             ErrorReporter::exception($err);
-            $this->exit(9);
+
+            return 9;
+        } finally {
+            --$this->runDepth;
         }
     }
 
@@ -91,6 +139,10 @@ class Terminal implements TerminalInterface
      */
     public function exit(int $code = 0): never
     {
+        if ($this->runDepth > 0) {
+            throw new CommandExitException($code);
+        }
+
         exit($code);
     }
 
@@ -128,7 +180,10 @@ class Terminal implements TerminalInterface
      * @author Bas Milius <bas@mili.us>
      * @since 2.0.0
      */
-    private function run(string $commandClass, ?ParserResult $result = null): void
+    private function runCommand(
+        string $commandClass,
+        ?ParserResult $result = null
+    ): void
     {
         $data = Data::parseCommand($commandClass);
         $command = $data->instantiate($result?->arguments ?? [], $result?->options ?? [], $this->container);
@@ -148,7 +203,11 @@ class Terminal implements TerminalInterface
      * @author Bas Milius <bas@mili.us>
      * @since 2.0.0
      */
-    private function closure(array $middlewares, CommandInterface $command, ?ParserResult $result = null): Closure
+    private function closure(
+        array $middlewares,
+        CommandInterface $command,
+        ?ParserResult $result = null
+    ): Closure
     {
         if (empty($middlewares)) {
             return fn() => $command->execute($this, $this->printer);
@@ -162,5 +221,4 @@ class Terminal implements TerminalInterface
 
         return fn() => $middleware->handle($command, $this, $this->printer, $next);
     }
-
 }
